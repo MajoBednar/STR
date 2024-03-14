@@ -8,7 +8,7 @@ def main():
 
     sentences_1 = []
     sentences_2 = []
-    for pair in sentence_pairs[0]:
+    for pair in sentence_pairs:
         sentences_1.append(pair[0])
         sentences_2.append(pair[1])
 
