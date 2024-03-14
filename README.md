@@ -1,2 +1,1 @@
-# STR
-Repository for Bachlor's project on Semantic Text Relatendess in Low-Resource Languages
+# Semantic Text Relatedness in Low-Resource Languages
