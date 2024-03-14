@@ -1,7 +1,6 @@
 from nltk import ngrams
-from maps import language_sentence_separator
-import pandas as pd
 from scipy.stats import spearmanr
+from load_data import load_data
 
 
 def calculate_dice_coefficient(sentence1: str, sentence2: str) -> float:
@@ -15,26 +14,11 @@ def calculate_dice_coefficient(sentence1: str, sentence2: str) -> float:
 
 
 def evaluate():
-    language = input('Language: ')
-    test_data_path = '../data/' + language + '/' + language + '_test_with_labels.csv'
-    test_df = pd.read_csv(test_data_path)
-
-    scores = test_df["Score"].tolist()
-    scores = [float(score) for score in scores]
-
-    sentences = test_df["Text"].tolist()
-    sentence_1s = []
-    sentence_2s = []
-    for sentence in sentences:
-        sentence_1, sentence_2 = sentence.split(
-            language_sentence_separator[language]
-        )
-        sentence_1s.append(sentence_1)
-        sentence_2s.append(sentence_2)
+    scores, sentence_pairs = load_data(language=input('Language: '), dataset='_test_with_labels.csv')
 
     lexical_overlap_scores = []
-    for sent1, sent2 in zip(sentence_1s, sentence_2s):
-        lexical_overlap_scores.append(calculate_dice_coefficient(sent1, sent2))
+    for pair in sentence_pairs:
+        lexical_overlap_scores.append(calculate_dice_coefficient(pair[0], pair[1]))
 
     spearman_correlation, _ = spearmanr(scores, lexical_overlap_scores)
     print(spearman_correlation)
