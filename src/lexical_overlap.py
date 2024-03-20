@@ -3,7 +3,7 @@ from scipy.stats import spearmanr
 
 from program_args import parse_program_args
 from load_data import load_data
-from maps import FULL_LANGUAGE_NAME
+from maps import FULL_LANGUAGE_NAME as FULL
 
 
 def calculate_dice_coefficient(sentence1: str, sentence2: str) -> float:
@@ -24,7 +24,7 @@ def evaluate_lexical_overlap(language: str = 'eng') -> None:
         lexical_overlap_scores.append(calculate_dice_coefficient(pair[0], pair[1]))
 
     spearman_correlation, _ = spearmanr(scores, lexical_overlap_scores)
-    print(f'Spearman correlation for {FULL_LANGUAGE_NAME[language]}: {spearman_correlation}')
+    print(f'Spearman correlation for {FULL[language]}: {spearman_correlation}')
 
 
 if __name__ == "__main__":
