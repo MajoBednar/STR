@@ -14,8 +14,8 @@ def usage() -> None:
     print(LANGUAGES[-1] + '\n')
 
 
-def parse_program_args() -> None:
+def parse_program_args() -> str | None:
     if len(argv) == 2 and argv[1] in LANGUAGES:
-        return
+        return argv[1]
     usage()
     raise Exception('Invalid usage')

@@ -1,9 +1,9 @@
-from sys import argv
 from nltk import ngrams
 from scipy.stats import spearmanr
 
 from program_args import parse_program_args
 from load_data import load_data
+from maps import FULL_LANGUAGE_NAME
 
 
 def calculate_dice_coefficient(sentence1: str, sentence2: str) -> float:
@@ -16,17 +16,16 @@ def calculate_dice_coefficient(sentence1: str, sentence2: str) -> float:
     return overlap / (len(ngram1) + len(ngram2))
 
 
-def evaluate():
-    scores, sentence_pairs = load_data(language=argv[1], dataset='_test_with_labels.csv')
+def evaluate_lexical_overlap(language: str = 'eng') -> None:
+    scores, sentence_pairs = load_data(language=language, dataset='_test_with_labels.csv')
 
     lexical_overlap_scores = []
     for pair in sentence_pairs:
         lexical_overlap_scores.append(calculate_dice_coefficient(pair[0], pair[1]))
 
     spearman_correlation, _ = spearmanr(scores, lexical_overlap_scores)
-    print(spearman_correlation)
+    print(f'Spearman correlation for {FULL_LANGUAGE_NAME[language]}: {spearman_correlation}')
 
 
 if __name__ == "__main__":
-    parse_program_args()
-    evaluate()
+    evaluate_lexical_overlap(language=parse_program_args())

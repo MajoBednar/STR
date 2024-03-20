@@ -1,4 +1,4 @@
-from maps import language_sentence_separator
+from maps import SENTENCE_SEPARATOR_FOR_LANGAUGE
 import pandas as pd
 
 
@@ -12,7 +12,7 @@ def load_sentence_pairs(df: pd.DataFrame, language: str = 'eng') -> list[list[st
     sentences = df["Text"].tolist()
     sentence_pairs = []
     for sentence in sentences:
-        sentence_1, sentence_2 = sentence.split(language_sentence_separator[language])
+        sentence_1, sentence_2 = sentence.split(SENTENCE_SEPARATOR_FOR_LANGAUGE[language])
         sentence_pairs.append([sentence_1, sentence_2])
     return sentence_pairs
 
