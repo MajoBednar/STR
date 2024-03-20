@@ -1,5 +1,8 @@
+from sys import argv
 from nltk import ngrams
 from scipy.stats import spearmanr
+
+from program_args import parse_program_args
 from load_data import load_data
 
 
@@ -14,7 +17,7 @@ def calculate_dice_coefficient(sentence1: str, sentence2: str) -> float:
 
 
 def evaluate():
-    scores, sentence_pairs = load_data(language=input('Language: '), dataset='_test_with_labels.csv')
+    scores, sentence_pairs = load_data(language=argv[1], dataset='_test_with_labels.csv')
 
     lexical_overlap_scores = []
     for pair in sentence_pairs:
@@ -25,4 +28,5 @@ def evaluate():
 
 
 if __name__ == "__main__":
+    parse_program_args()
     evaluate()
