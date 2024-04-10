@@ -19,7 +19,7 @@ def load_sentence_pairs(df: pd.DataFrame, language: str = 'eng') -> list[list[st
 
 
 def load_data(language: str = 'eng', dataset: str = '_train') -> (list[float], list[list[str]]):
-    data_path = '../data/' + language + '/' + language + dataset
+    data_path = 'data/datasets_original_splits/' + language + '/' + language + dataset
     df = pd.read_csv(data_path)
     scores = load_scores(df)
     sentence_pairs = load_sentence_pairs(df, language)
