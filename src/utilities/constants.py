@@ -1,3 +1,5 @@
+LANGUAGES = ['afr', 'eng', 'esp', 'hin', 'mar', 'pan']
+
 FULL_LANGUAGE_NAME = {
     'afr': 'Afrikaans',
     'eng': 'English',

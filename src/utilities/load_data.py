@@ -1,5 +1,6 @@
-from maps import SENTENCE_SEPARATOR_FOR_LANGAUGE as SEPARATOR
 import pandas as pd
+
+from .constants import SENTENCE_SEPARATOR_FOR_LANGAUGE as SEPARATOR
 
 
 def load_scores(df: pd.DataFrame) -> list[float]:

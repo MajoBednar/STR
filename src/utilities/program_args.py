@@ -1,14 +1,13 @@
 from sys import argv
 
-
-LANGUAGES = ['afr', 'eng', 'esp', 'hin', 'mar', 'pan']
+from .constants import LANGUAGES
 
 
 def usage() -> None:
-    print('\nUsage: ' + argv[0] + ' ' + 'language\n')
+    print('\nUsage: ' + argv[0] + ' ' + '<language>\n')
     print(argv[0] + ': program name')
-    print('language: tha language for which the program is called')
-    print('          language can be: ', end='')
+    print('<language>: tha language for which the program is called')
+    print('            <language> can be: ', end='')
     for lang in LANGUAGES[:-1]:
         print(lang, end='/')
     print(LANGUAGES[-1] + '\n')

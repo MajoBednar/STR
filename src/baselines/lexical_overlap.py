@@ -1,9 +1,9 @@
 from nltk import ngrams
 from scipy.stats import spearmanr
 
-from program_args import parse_program_args
-from load_data import load_data
-from maps import FULL_LANGUAGE_NAME as FULL
+from src.utilities.program_args import parse_program_args
+from src.utilities.load_data import load_data
+from src.utilities.constants import FULL_LANGUAGE_NAME as FULL
 
 
 def calculate_dice_coefficient(sentence1: str, sentence2: str) -> float:

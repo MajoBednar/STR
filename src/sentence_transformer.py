@@ -3,9 +3,9 @@ from sentence_transformers import SentenceTransformer
 from scipy.stats import spearmanr
 from sklearn.linear_model import LinearRegression
 
-from program_args import parse_program_args
-from load_data import load_data, sentence_pairs_to_pair_of_sentences
-from metrics import cosine_similarities
+from src.utilities.program_args import parse_program_args
+from src.utilities.load_data import load_data, sentence_pairs_to_pair_of_sentences
+from src.utilities.metrics import cosine_similarities
 
 
 def train(language: str = 'eng'):
