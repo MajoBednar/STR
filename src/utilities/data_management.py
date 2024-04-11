@@ -42,6 +42,18 @@ class DataManager:
 
         self.spearman_correlation: float = 0
 
+        self.scores = {
+            'Train': self.scores_train,
+            'Dev': self.scores_dev,
+            'Test': self.scores_test
+        }
+
+        self.sentence_pairs = {
+            'Train': self.sentence_pairs_train,
+            'Dev': self.sentence_pairs_dev,
+            'Test': self.sentence_pairs_test
+        }
+
     def initialize_data(self) -> tuple:
         scores_train, sentence_pairs_train = load_data(language=self.language, dataset='_train')
         scores_dev, sentence_pairs_dev = load_data(language=self.language, dataset='_dev_with_labels')

@@ -36,6 +36,12 @@ class DataManagerWithSentenceEmbeddings(DataManager):
 
         self.embedding_dim = len(self.sentence_embeddings_train[0][0])
 
+        self.sentence_embeddings = {
+            'Train': self.sentence_embeddings_train,
+            'Dev': self.sentence_embeddings_dev,
+            'Test': self.sentence_embeddings_test
+        }
+
     def sentence_embeddings_train_dev(self) -> tuple:
         train_dev1 = np.concatenate((self.sentence_embeddings_train[0], self.sentence_embeddings_dev[0]), axis=0)
         train_dev2 = np.concatenate((self.sentence_embeddings_train[1], self.sentence_embeddings_dev[1]), axis=0)

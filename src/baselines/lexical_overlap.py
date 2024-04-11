@@ -19,15 +19,17 @@ class STRLexicalOverlap:
         overlap = 2 * len(ngram1.intersection(ngram2))
         return overlap / (len(ngram1) + len(ngram2))
 
-    def evaluate(self) -> None:
+    def evaluate(self, dataset: str = 'Test') -> None:
         lexical_overlap_scores = []
-        for pair in self.data.sentence_pairs_test:
+        for pair in self.data.sentence_pairs[dataset]:
             lexical_overlap_scores.append(self.calculate_dice_coefficient(pair[0], pair[1]))
 
-        self.data.calculate_spearman_correlation(self.data.scores_test, lexical_overlap_scores)
-        self.data.print_results(self.name)
+        self.data.calculate_spearman_correlation(self.data.scores[dataset], lexical_overlap_scores)
+        self.data.print_results(self.name, dataset)
 
 
 if __name__ == "__main__":
     lexical_overlap = STRLexicalOverlap(language=parse_program_args())
-    lexical_overlap.evaluate()
+    lexical_overlap.evaluate('Train')
+    lexical_overlap.evaluate('Dev')
+    lexical_overlap.evaluate('Test')
