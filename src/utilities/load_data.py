@@ -9,7 +9,7 @@ def load_scores(df: pd.DataFrame) -> list[float]:
     return scores
 
 
-def load_sentence_pairs(df: pd.DataFrame, language: str = 'eng') -> list[list[str]]:
+def load_sentence_pairs(df: pd.DataFrame, language: str) -> list[list[str]]:
     sentences = df["Text"].tolist()
     sentence_pairs = []
     for sentence in sentences:
@@ -18,14 +18,9 @@ def load_sentence_pairs(df: pd.DataFrame, language: str = 'eng') -> list[list[st
     return sentence_pairs
 
 
-def load_data(language: str = 'eng', dataset: str = '_train') -> tuple[list[float], list[list[str]]]:
-    data_path = 'data/datasets_original_splits/' + language + '/' + language + dataset
+def load_data(language: str, dataset: str) -> tuple[list[float], list[list[str]]]:
+    data_path = 'data/datasets_original_splits/' + language + '/' + language + dataset + '.csv'
     df = pd.read_csv(data_path)
     scores = load_scores(df)
     sentence_pairs = load_sentence_pairs(df, language)
     return scores, sentence_pairs
-
-
-def sentence_pairs_to_pair_of_sentences(sentence_pairs: list[list[str]]) -> tuple[list[str], list[str]]:
-    list_1, list_2 = zip(*sentence_pairs)
-    return list(list_1), list(list_2)
