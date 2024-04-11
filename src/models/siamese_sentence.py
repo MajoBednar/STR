@@ -22,6 +22,7 @@ class SiameseNetworkForSentences(nn.Module):
 
         # Additional layers for combining outputs (optional)
         self.fc = nn.Linear(16, 1)
+        nn.ReLU()
 
     def forward(self, x1, x2):
         # Process each sentence embedding through the shared branch
@@ -53,8 +54,7 @@ class SiameseNetworkForSentences(nn.Module):
     #         nn.Linear(128, 32),
     #         nn.ReLU(),
     #         nn.Linear(32, 1),
-    #         nn.Sigmoid(),
-    #         nn.Linear(1, 1)
+    #         nn.ReLU(),
     #     )
     #
     # def forward(self, embedding_sentence1, embedding_sentence2):
@@ -111,11 +111,12 @@ class SiameseSentence:
             with torch.no_grad():
                 predicted_scores.append(self.model(input1, input2).item())
 
+        # print(predicted_scores)
         self.data.calculate_spearman_correlation(self.data.scores_test, predicted_scores)
         self.data.print_results(self.name)
 
 
 if __name__ == '__main__':
     siamese_sentence = SiameseSentence(language=parse_program_args())
-    siamese_sentence.train(epochs=100)
+    siamese_sentence.train(epochs=15)
     siamese_sentence.evaluate()
