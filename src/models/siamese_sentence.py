@@ -1,4 +1,8 @@
 import torch.nn as nn
+from sentence_transformers import SentenceTransformer
+
+from src.utilities.program_args import parse_program_args
+from src.utilities.data_management import DataManager
 
 
 class SiameseNetworkForSentences(nn.Module):
@@ -30,4 +34,20 @@ class SiameseNetworkForSentences(nn.Module):
 
 
 class SiameseSentence:
-    pass
+    def __init__(self, language: str):
+        self.name = 'Siamese Network For Sentence Embeddings'
+        self.data = DataManager(language)
+        self.sentence_transformer = SentenceTransformer('all-MiniLM-L6-v2')
+        self.model = None
+
+    def train(self):
+        pass
+
+    def evaluate(self):
+        pass
+
+
+if __name__ == '__main__':
+    siamese_sentence = SiameseSentence(language=parse_program_args())
+    siamese_sentence.train()
+    siamese_sentence.evaluate()

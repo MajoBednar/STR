@@ -1,9 +1,7 @@
-from sentence_transformers import SentenceTransformer
 from sklearn.linear_model import LinearRegression
 
 from src.utilities.program_args import parse_program_args
-from src.utilities.data_management import DataManager
-from src.embeddings.sentence_embeddings import create_sentence_embeddings, sum_embeddings, concat_embeddings
+from src.embeddings.sentence_embeddings import sum_embeddings, concat_embeddings, DataManagerWithSentenceEmbeddings
 
 
 class STRLinearRegression:
@@ -12,14 +10,12 @@ class STRLinearRegression:
         self.name += 'Summing' if pooling_function == sum_embeddings else 'Concatenating'
         self.name += ' Sentence Embeddings'
 
-        self.data = DataManager(language)
-        self.sentence_transformer = SentenceTransformer('all-MiniLM-L6-v2')
+        self.data = DataManagerWithSentenceEmbeddings(language)
         self.regressor = LinearRegression()
         self.pooling_function = pooling_function
 
     def train(self) -> None:
-        embeddings1, embeddings2 = create_sentence_embeddings(self.sentence_transformer, self.data.sentence_pairs_train
-                                                              + self.data.sentence_pairs_dev)
+        embeddings1, embeddings2 = self.data.sentence_embeddings_train_dev()
         pooled_embeddings = self.pooling_function(embeddings1, embeddings2)
         self.regressor.fit(pooled_embeddings, self.data.scores_train + self.data.scores_dev)
 
@@ -28,7 +24,7 @@ class STRLinearRegression:
         self.data.print_results(self.name, 'Training + Development')
 
     def evaluate(self) -> None:
-        embeddings1, embeddings2 = create_sentence_embeddings(self.sentence_transformer, self.data.sentence_pairs_test)
+        embeddings1, embeddings2 = self.data.sentence_embeddings_test
         pooled_embeddings = self.pooling_function(embeddings1, embeddings2)
         predicted_scores = self.regressor.predict(pooled_embeddings)
 
