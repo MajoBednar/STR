@@ -34,8 +34,8 @@ class DataManagerWithSentenceEmbeddings(DataManager):
             'Train': create_sentence_embeddings(self.sentence_transformer, self.sentence_pairs['Train']),
             'Dev': create_sentence_embeddings(self.sentence_transformer, self.sentence_pairs['Dev']),
             'Test': create_sentence_embeddings(self.sentence_transformer, self.sentence_pairs['Test']),
-            'Train+Dev': self.sentence_embeddings_train_dev()
         }
+        self.sentence_embeddings['Train+Dev'] = self.sentence_embeddings_train_dev()
         self.embedding_dim = len(self.sentence_embeddings['Train'][0][0])
 
         self.save(sentence_transformer_model)
@@ -52,7 +52,10 @@ class DataManagerWithSentenceEmbeddings(DataManager):
 
     @staticmethod
     def load(language: str, sentence_transformer_model: str = 'all-MiniLM-L6-v2'):
-        path = 'data/embeddings/sentence_embeddings_' + sentence_transformer_model + '_' + language + '.pkl'
-        with open(path, 'rb') as file:
-            data_manager = pkl.load(file)
+        try:
+            path = 'data/embeddings/sentence_embeddings_' + sentence_transformer_model + '_' + language + '.pkl'
+            with open(path, 'rb') as file:
+                data_manager = pkl.load(file)
+        except FileNotFoundError:
+            data_manager = DataManagerWithSentenceEmbeddings(language)
         return data_manager
