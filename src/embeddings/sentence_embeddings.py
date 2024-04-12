@@ -1,5 +1,6 @@
 import numpy as np
 from sentence_transformers import SentenceTransformer
+import pickle as pkl
 
 from src.utilities.data_management import DataManager
 
@@ -39,10 +40,25 @@ class DataManagerWithSentenceEmbeddings(DataManager):
         self.sentence_embeddings = {
             'Train': self.sentence_embeddings_train,
             'Dev': self.sentence_embeddings_dev,
-            'Test': self.sentence_embeddings_test
+            'Test': self.sentence_embeddings_test,
+            'Train+Dev': self.sentence_embeddings_train_dev()
         }
+
+        self.save()
 
     def sentence_embeddings_train_dev(self) -> tuple:
         train_dev1 = np.concatenate((self.sentence_embeddings_train[0], self.sentence_embeddings_dev[0]), axis=0)
         train_dev2 = np.concatenate((self.sentence_embeddings_train[1], self.sentence_embeddings_dev[1]), axis=0)
         return train_dev1, train_dev2
+
+    def save(self):
+        path = 'data/embeddings/sentence_embeddings_' + self.language + '.pickle'
+        with open(path, 'wb') as file:
+            pkl.dump(self, file)
+
+    @staticmethod
+    def load(language: str):
+        path = 'data/embeddings/sentence_embeddings_' + language + '.pickle'
+        with open(path, 'rb') as file:
+            data_manager = pkl.load(file)
+        return data_manager

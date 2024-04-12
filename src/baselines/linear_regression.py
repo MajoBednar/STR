@@ -10,26 +10,27 @@ class STRLinearRegression:
         self.name += 'Summing' if pooling_function == sum_embeddings else 'Concatenating'
         self.name += ' Sentence Embeddings'
 
-        self.data = DataManagerWithSentenceEmbeddings(language)
+        self.data = DataManagerWithSentenceEmbeddings.load(language)
         self.regressor = LinearRegression()
         self.pooling_function = pooling_function
 
     def train(self) -> None:
-        embeddings1, embeddings2 = self.data.sentence_embeddings_train_dev()
+        dataset = 'Train+Dev'
+        embeddings1, embeddings2 = self.data.sentence_embeddings[dataset]
         pooled_embeddings = self.pooling_function(embeddings1, embeddings2)
-        self.regressor.fit(pooled_embeddings, self.data.scores_train + self.data.scores_dev)
+        self.regressor.fit(pooled_embeddings, self.data.scores[dataset])
 
         predicted_scores = self.regressor.predict(pooled_embeddings)
-        self.data.calculate_spearman_correlation(self.data.scores_train + self.data.scores_dev, predicted_scores)
-        self.data.print_results(self.name, 'Training + Development')
+        self.data.calculate_spearman_correlation(self.data.scores[dataset], predicted_scores)
+        self.data.print_results(self.name, dataset)
 
-    def evaluate(self) -> None:
-        embeddings1, embeddings2 = self.data.sentence_embeddings_test
+    def evaluate(self, dataset: str = 'Test') -> None:
+        embeddings1, embeddings2 = self.data.sentence_embeddings[dataset]
         pooled_embeddings = self.pooling_function(embeddings1, embeddings2)
         predicted_scores = self.regressor.predict(pooled_embeddings)
 
-        self.data.calculate_spearman_correlation(self.data.scores_test, predicted_scores)
-        self.data.print_results(self.name)
+        self.data.calculate_spearman_correlation(self.data.scores[dataset], predicted_scores)
+        self.data.print_results(self.name, dataset)
 
 
 if __name__ == '__main__':

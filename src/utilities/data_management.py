@@ -45,7 +45,8 @@ class DataManager:
         self.scores = {
             'Train': self.scores_train,
             'Dev': self.scores_dev,
-            'Test': self.scores_test
+            'Test': self.scores_test,
+            'Train+Dev': self.scores_train + self.scores_dev
         }
 
         self.sentence_pairs = {

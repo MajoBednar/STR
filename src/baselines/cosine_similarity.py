@@ -6,7 +6,7 @@ from src.utilities.program_args import parse_program_args
 class STRCosineSimilarity:
     def __init__(self, language: str):
         self.name = 'Cosine Similarity'
-        self.data = DataManagerWithSentenceEmbeddings(language)
+        self.data = DataManagerWithSentenceEmbeddings.load(language)
 
     def evaluate(self, dataset: str = 'Test') -> None:
         similarity_scores = compute_cosine_similarities(self.data.sentence_embeddings[dataset][0],

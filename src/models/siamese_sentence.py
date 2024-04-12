@@ -69,7 +69,7 @@ class SiameseNetworkForSentences(nn.Module):
 class SiameseSentence:
     def __init__(self, language: str, learning_rate: float = 0.001):
         self.name = 'Siamese Network for Sentence Embeddings'
-        self.data = DataManagerWithSentenceEmbeddings(language)
+        self.data = DataManagerWithSentenceEmbeddings.load(language)
         self.model = SiameseNetworkForSentences(self.data.embedding_dim)
         self.loss_function = nn.MSELoss()
         self.optimizer = Adam(self.model.parameters(), lr=learning_rate)
