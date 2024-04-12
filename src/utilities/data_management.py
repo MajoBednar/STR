@@ -32,28 +32,18 @@ class DataManager:
         self.language: str = language
 
         data = self.initialize_data()
-        self.scores_train: list[float] = data[0]
-        self.scores_dev: list[float] = data[1]
-        self.scores_test: list[float] = data[2]
-
-        self.sentence_pairs_train: list[list[str]] = data[3]
-        self.sentence_pairs_dev: list[list[str]] = data[4]
-        self.sentence_pairs_test: list[list[str]] = data[5]
-
+        self.scores: dict[str, list[float]] = {
+            'Train': data[0],
+            'Dev': data[1],
+            'Test': data[2],
+            'Train+Dev': data[0] + data[1]
+        }
+        self.sentence_pairs: dict[str, list[list[str]]] = {
+            'Train': data[3],
+            'Dev': data[4],
+            'Test': data[5]
+        }
         self.spearman_correlation: float = 0
-
-        self.scores = {
-            'Train': self.scores_train,
-            'Dev': self.scores_dev,
-            'Test': self.scores_test,
-            'Train+Dev': self.scores_train + self.scores_dev
-        }
-
-        self.sentence_pairs = {
-            'Train': self.sentence_pairs_train,
-            'Dev': self.sentence_pairs_dev,
-            'Test': self.sentence_pairs_test
-        }
 
     def initialize_data(self) -> tuple:
         scores_train, sentence_pairs_train = load_data(language=self.language, dataset='_train')

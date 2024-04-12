@@ -30,35 +30,29 @@ class DataManagerWithSentenceEmbeddings(DataManager):
         super().__init__(language)
         self.sentence_transformer = SentenceTransformer(sentence_transformer_model)
 
-        self.sentence_embeddings_train = create_sentence_embeddings(self.sentence_transformer,
-                                                                    self.sentence_pairs_train)
-        self.sentence_embeddings_dev = create_sentence_embeddings(self.sentence_transformer, self.sentence_pairs_dev)
-        self.sentence_embeddings_test = create_sentence_embeddings(self.sentence_transformer, self.sentence_pairs_test)
-
-        self.embedding_dim = len(self.sentence_embeddings_train[0][0])
-
         self.sentence_embeddings = {
-            'Train': self.sentence_embeddings_train,
-            'Dev': self.sentence_embeddings_dev,
-            'Test': self.sentence_embeddings_test,
+            'Train': create_sentence_embeddings(self.sentence_transformer, self.sentence_pairs['Train']),
+            'Dev': create_sentence_embeddings(self.sentence_transformer, self.sentence_pairs['Dev']),
+            'Test': create_sentence_embeddings(self.sentence_transformer, self.sentence_pairs['Test']),
             'Train+Dev': self.sentence_embeddings_train_dev()
         }
+        self.embedding_dim = len(self.sentence_embeddings['Train'][0][0])
 
-        self.save()
+        self.save(sentence_transformer_model)
 
     def sentence_embeddings_train_dev(self) -> tuple:
-        train_dev1 = np.concatenate((self.sentence_embeddings_train[0], self.sentence_embeddings_dev[0]), axis=0)
-        train_dev2 = np.concatenate((self.sentence_embeddings_train[1], self.sentence_embeddings_dev[1]), axis=0)
+        train_dev1 = np.concatenate((self.sentence_embeddings['Train'][0], self.sentence_embeddings['Dev'][0]), axis=0)
+        train_dev2 = np.concatenate((self.sentence_embeddings['Train'][1], self.sentence_embeddings['Dev'][1]), axis=0)
         return train_dev1, train_dev2
 
-    def save(self):
-        path = 'data/embeddings/sentence_embeddings_' + self.language + '.pickle'
+    def save(self, sentence_transformer_model: str):
+        path = 'data/embeddings/sentence_embeddings_' + sentence_transformer_model + '_' + self.language + '.pkl'
         with open(path, 'wb') as file:
             pkl.dump(self, file)
 
     @staticmethod
-    def load(language: str):
-        path = 'data/embeddings/sentence_embeddings_' + language + '.pickle'
+    def load(language: str, sentence_transformer_model: str = 'all-MiniLM-L6-v2'):
+        path = 'data/embeddings/sentence_embeddings_' + sentence_transformer_model + '_' + language + '.pkl'
         with open(path, 'rb') as file:
             data_manager = pkl.load(file)
         return data_manager
