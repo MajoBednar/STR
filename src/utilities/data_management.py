@@ -31,7 +31,7 @@ class DataManager:
     def __init__(self, language):
         self.language: str = language
 
-        data = self.initialize_data()
+        data = self.__initialize_data()
         self.scores: dict[str, list[float]] = {
             'Train': data[0],
             'Dev': data[1],
@@ -45,7 +45,7 @@ class DataManager:
         }
         self.spearman_correlation: float = 0
 
-    def initialize_data(self) -> tuple:
+    def __initialize_data(self) -> tuple:
         scores_train, sentence_pairs_train = load_data(language=self.language, dataset='_train')
         scores_dev, sentence_pairs_dev = load_data(language=self.language, dataset='_dev_with_labels')
         scores_test, sentence_pairs_test = load_data(language=self.language, dataset='_test_with_labels')

@@ -1,6 +1,7 @@
 import numpy as np
 from sentence_transformers import SentenceTransformer
 import pickle as pkl
+import os
 
 from src.utilities.data_management import DataManager
 
@@ -35,27 +36,29 @@ class DataManagerWithSentenceEmbeddings(DataManager):
             'Dev': create_sentence_embeddings(self.sentence_transformer, self.sentence_pairs['Dev']),
             'Test': create_sentence_embeddings(self.sentence_transformer, self.sentence_pairs['Test']),
         }
-        self.sentence_embeddings['Train+Dev'] = self.sentence_embeddings_train_dev()
+        self.__sentence_embeddings_train_dev()
         self.embedding_dim = len(self.sentence_embeddings['Train'][0][0])
 
-        self.save(sentence_transformer_model)
+        self._save(sentence_transformer_model)
 
-    def sentence_embeddings_train_dev(self) -> tuple:
+    def __sentence_embeddings_train_dev(self) -> None:
         train_dev1 = np.concatenate((self.sentence_embeddings['Train'][0], self.sentence_embeddings['Dev'][0]), axis=0)
         train_dev2 = np.concatenate((self.sentence_embeddings['Train'][1], self.sentence_embeddings['Dev'][1]), axis=0)
-        return train_dev1, train_dev2
+        self.sentence_embeddings['Train+Dev'] = train_dev1, train_dev2
 
-    def save(self, sentence_transformer_model: str):
-        path = 'data/embeddings/sentence_embeddings_' + sentence_transformer_model + '_' + self.language + '.pkl'
+    def _save(self, sentence_transformer_model: str):
+        directory = 'data/embeddings/'
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        path = directory + 'sentence_embeddings_' + sentence_transformer_model + '_' + self.language + '.pkl'
         with open(path, 'wb') as file:
             pkl.dump(self, file)
 
     @staticmethod
     def load(language: str, sentence_transformer_model: str = 'all-MiniLM-L6-v2'):
-        try:
-            path = 'data/embeddings/sentence_embeddings_' + sentence_transformer_model + '_' + language + '.pkl'
+        path = 'data/embeddings/sentence_embeddings_' + sentence_transformer_model + '_' + language + '.pkl'
+        if os.path.exists(path):
             with open(path, 'rb') as file:
-                data_manager = pkl.load(file)
-        except FileNotFoundError:
-            data_manager = DataManagerWithSentenceEmbeddings(language)
-        return data_manager
+                return pkl.load(file)
+        return DataManagerWithSentenceEmbeddings(language)

@@ -77,12 +77,12 @@ class SiameseSentence:
     def train(self, epochs: int = 1, batch_size: int = 32):
         for epoch in range(epochs):
             running_loss = 0.0
-            for batch in range(0, len(self.data.sentence_pairs_train), batch_size):
+            for batch in range(0, len(self.data.sentence_pairs['Train']), batch_size):
                 self.optimizer.zero_grad()
 
-                inputs1 = torch.tensor(self.data.sentence_embeddings_train[0][batch:batch + batch_size])
-                inputs2 = torch.tensor(self.data.sentence_embeddings_train[1][batch:batch + batch_size])
-                true_scores = torch.tensor(self.data.scores_train[batch:batch + batch_size])
+                inputs1 = torch.tensor(self.data.sentence_embeddings['Train'][0][batch:batch + batch_size])
+                inputs2 = torch.tensor(self.data.sentence_embeddings['Train'][1][batch:batch + batch_size])
+                true_scores = torch.tensor(self.data.scores['Train'][batch:batch + batch_size])
 
                 outputs = self.model(inputs1, inputs2)
                 true_scores = true_scores.unsqueeze(1)
@@ -93,30 +93,30 @@ class SiameseSentence:
 
                 running_loss += loss.item() * inputs1.size(0)
 
-            epoch_loss = running_loss / len(self.data.sentence_pairs_train)
+            epoch_loss = running_loss / len(self.data.sentence_pairs['Train'])
 
-            input1 = torch.tensor(self.data.sentence_embeddings_test[0])
-            input2 = torch.tensor(self.data.sentence_embeddings_test[1])
-            true_scores_dev = torch.tensor(self.data.scores_train)
+            input1 = torch.tensor(self.data.sentence_embeddings['Test'][0])
+            input2 = torch.tensor(self.data.sentence_embeddings['Test'][1])
+            true_scores_test = torch.tensor(self.data.scores['Test'])
             with torch.no_grad():
-                predicted_scores_dev = self.model(input1, input2)
-                dev_loss = self.loss_function(predicted_scores_dev, true_scores_dev)
-            print(f"Epoch {epoch + 1}/{epochs}, Loss: {epoch_loss:.4f}, Val Loss: {dev_loss}")
+                predicted_scores_test = self.model(input1, input2)
+                test_loss = self.loss_function(predicted_scores_test, true_scores_test)
+            print(f"Epoch {epoch + 1}/{epochs}, Loss: {epoch_loss:.4f}, Test Loss: {test_loss}")
 
     def evaluate(self):
         predicted_scores = []
-        for i in range(len(self.data.sentence_pairs_test)):
-            input1 = torch.tensor(self.data.sentence_embeddings_test[0][i])
-            input2 = torch.tensor(self.data.sentence_embeddings_test[1][i])
+        for i in range(len(self.data.sentence_pairs['Test'])):
+            input1 = torch.tensor(self.data.sentence_embeddings['Test'][0][i])
+            input2 = torch.tensor(self.data.sentence_embeddings['Test'][1][i])
             with torch.no_grad():
                 predicted_scores.append(self.model(input1, input2).item())
 
         # print(predicted_scores)
-        self.data.calculate_spearman_correlation(self.data.scores_test, predicted_scores)
+        self.data.calculate_spearman_correlation(self.data.scores['Test'], predicted_scores)
         self.data.print_results(self.name)
 
 
 if __name__ == '__main__':
     siamese_sentence = SiameseSentence(language=parse_program_args())
-    siamese_sentence.train(epochs=15)
+    siamese_sentence.train(epochs=120)
     siamese_sentence.evaluate()
