@@ -55,9 +55,8 @@ class DataManager:
         self.spearman_correlation, _ = spearmanr(true_scores, predicted_scores)
 
     def print_results(self, model_name: str, dataset: str = 'Test') -> None:
-        print()
         print(f'Model:                {model_name}')
         print(f'Language:             {FULL[self.language]}')
         print(f'Set:                  {dataset}')
-        print(f'Spearman Correlation: {self.spearman_correlation}')
+        print(f'Spearman Correlation: {self.spearman_correlation:.3f}')
         print()
