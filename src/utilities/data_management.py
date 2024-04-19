@@ -66,12 +66,12 @@ class DataManager:
         self.warning = data[6]
 
     def __initialize_data(self) -> tuple:
-        scores_train, sentence_pairs_train, replaced = load_data(language=self.language, dataset='_train')
-        scores_dev, sentence_pairs_dev, replaced = load_data(language=self.language, dataset='_dev_with_labels')
-        scores_test, sentence_pairs_test, replaced = load_data(language=self.language, dataset='_test_with_labels')
+        scores_train, sentence_pairs_train, r1 = load_data(language=self.language, dataset='_train')
+        scores_dev, sentence_pairs_dev, r2 = load_data(language=self.language, dataset='_dev_with_labels')
+        scores_test, sentence_pairs_test, r3 = load_data(language=self.language, dataset='_test_with_labels')
         return scores_train, scores_dev, scores_test, \
             sentence_pairs_train, sentence_pairs_dev, sentence_pairs_test, \
-            replaced
+            r1 or r2 or r3
 
     def calculate_spearman_correlation(self, true_scores, predicted_scores):
         self.spearman_correlation, _ = spearmanr(true_scores, predicted_scores)
