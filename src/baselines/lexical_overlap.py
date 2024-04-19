@@ -28,8 +28,17 @@ class STRLexicalOverlap:
         self.data.print_results(self.name, dataset)
 
 
-if __name__ == "__main__":
+def evaluate_lexical_overlap(language: str) -> None:
+    lexical_overlap = STRLexicalOverlap(language=language)
+    lexical_overlap.evaluate('Test')
+
+
+def main() -> None:
     lexical_overlap = STRLexicalOverlap(language=parse_program_args())
     lexical_overlap.evaluate('Train')
     lexical_overlap.evaluate('Dev')
     lexical_overlap.evaluate('Test')
+
+
+if __name__ == "__main__":
+    main()

@@ -66,9 +66,10 @@ class SiameseNetworkForSentences(nn.Module):
 
 
 class SiameseSentence:
-    def __init__(self, language: str, learning_rate: float = 0.001):
+    def __init__(self, language: str, learning_rate: float = 0.001, verbose: str = 'default'):
         self.name = 'Siamese Network for Sentence Embeddings'
         self.data = DataManagerWithSentenceEmbeddings.load(language)
+        self.verbose = verbose
 
         self.model = SiameseNetworkForSentences(self.data.embedding_dim)
         self.loss_function = nn.MSELoss()
@@ -102,7 +103,8 @@ class SiameseSentence:
             with torch.no_grad():
                 predicted_scores_test = self.model(input1, input2)
                 test_loss = self.loss_function(predicted_scores_test, true_scores_test)
-            print(f"Epoch {epoch + 1}/{epochs}, Loss: {epoch_loss:.4f}, Test Loss: {test_loss:.4f}")
+            if self.verbose == 'default' or self.verbose == 'expressive':
+                print(f"Epoch {epoch + 1}/{epochs}, Loss: {epoch_loss:.4f}, Test Loss: {test_loss:.4f}")
             # self.evaluate()
 
     def evaluate(self, dataset: str = 'Test'):
@@ -116,8 +118,18 @@ class SiameseSentence:
         self.data.print_results(self.name, dataset)
 
 
-if __name__ == '__main__':
+def evaluate_siamese_sentence(language: str) -> None:
+    siamese_sentence = SiameseSentence(language=language, verbose='silent')
+    siamese_sentence.train(epochs=10)
+    siamese_sentence.evaluate()
+
+
+def main() -> None:
     siamese_sentence = SiameseSentence(language=parse_program_args())
-    siamese_sentence.train(epochs=50)
+    siamese_sentence.train(epochs=10)
     siamese_sentence.evaluate(dataset='Train')
     siamese_sentence.evaluate()
+
+
+if __name__ == '__main__':
+    main()

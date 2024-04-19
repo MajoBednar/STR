@@ -16,8 +16,17 @@ class STRCosineSimilarity:
         self.data.print_results(self.name, dataset)
 
 
-if __name__ == '__main__':
+def evaluate_cosine_similarity(language: str) -> None:
+    cosine_similarity = STRCosineSimilarity(language=language)
+    cosine_similarity.evaluate('Test')
+
+
+def main() -> None:
     cosine_similarity = STRCosineSimilarity(language=parse_program_args())
     cosine_similarity.evaluate('Train')
     cosine_similarity.evaluate('Dev')
     cosine_similarity.evaluate()
+
+
+if __name__ == '__main__':
+    main()

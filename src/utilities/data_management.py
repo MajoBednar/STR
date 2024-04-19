@@ -1,11 +1,25 @@
 import pandas as pd
+import os
 from scipy.stats import spearmanr
 
 from .constants import SENTENCE_SEPARATOR_FOR_LANGAUGE as SEPARATOR, FULL_LANGUAGE_NAME as FULL
 
 
+def print_missing_dataset_warning(old_dataset: str, new_dataset: str) -> None:
+    print(f'WARNING: {old_dataset} dataset is missing and being replaced with {new_dataset} dataset')
+
+
+def replace_missing_dataset(language: str, dataset: str) -> str:
+    new_dataset = 'REPLACEMENT FAILED'
+    match dataset:
+        case '_train' | '_test_with_labels':
+            new_dataset = '_dev_with_labels'
+    print_missing_dataset_warning(language + dataset, language + new_dataset)
+    return language + new_dataset + '.csv'
+
+
 def load_scores(df: pd.DataFrame) -> list[float]:
-    scores = df["Score"].tolist()
+    scores = df['Score'].tolist()
     scores = [float(score) for score in scores]
     return scores
 
@@ -19,12 +33,17 @@ def load_sentence_pairs(df: pd.DataFrame, language: str) -> list[list[str]]:
     return sentence_pairs
 
 
-def load_data(language: str, dataset: str) -> tuple[list[float], list[list[str]]]:
-    data_path = 'data/datasets_original_splits/' + language + '/' + language + dataset + '.csv'
-    df = pd.read_csv(data_path)
+def load_data(language: str, dataset: str) -> tuple[list[float], list[list[str]], bool]:
+    path = 'data/datasets_original_splits/' + language + '/'
+    file = language + dataset + '.csv'
+    replaced = False
+    if not os.path.exists(path + file):
+        file = replace_missing_dataset(language, dataset)
+        replaced = True
+    df = pd.read_csv(path + file)
     scores = load_scores(df)
     sentence_pairs = load_sentence_pairs(df, language)
-    return scores, sentence_pairs
+    return scores, sentence_pairs, replaced
 
 
 class DataManager:
@@ -44,12 +63,15 @@ class DataManager:
             'Test': data[5]
         }
         self.spearman_correlation: float = 0
+        self.warning = data[6]
 
     def __initialize_data(self) -> tuple:
-        scores_train, sentence_pairs_train = load_data(language=self.language, dataset='_train')
-        scores_dev, sentence_pairs_dev = load_data(language=self.language, dataset='_dev_with_labels')
-        scores_test, sentence_pairs_test = load_data(language=self.language, dataset='_test_with_labels')
-        return scores_train, scores_dev, scores_test, sentence_pairs_train, sentence_pairs_dev, sentence_pairs_test
+        scores_train, sentence_pairs_train, replaced = load_data(language=self.language, dataset='_train')
+        scores_dev, sentence_pairs_dev, replaced = load_data(language=self.language, dataset='_dev_with_labels')
+        scores_test, sentence_pairs_test, replaced = load_data(language=self.language, dataset='_test_with_labels')
+        return scores_train, scores_dev, scores_test, \
+            sentence_pairs_train, sentence_pairs_dev, sentence_pairs_test, \
+            replaced
 
     def calculate_spearman_correlation(self, true_scores, predicted_scores):
         self.spearman_correlation, _ = spearmanr(true_scores, predicted_scores)
@@ -59,4 +81,6 @@ class DataManager:
         print(f'Language:             {FULL[self.language]}')
         print(f'Set:                  {dataset}')
         print(f'Spearman Correlation: {self.spearman_correlation:.3f}')
+        if self.warning:
+            print(f'WARNING: Some datasets were missing and were replaced with existing datasets')
         print()
