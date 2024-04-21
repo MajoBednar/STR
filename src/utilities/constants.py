@@ -10,7 +10,7 @@ FULL_LANGUAGE_NAME = {
 }
 
 SENTENCE_SEPARATOR_FOR_LANGAUGE = {
-    'afr': '\t',
+    'afr': '\n',
     'eng': '\n',
     'esp': '\n',
     'hin': '\n',
