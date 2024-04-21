@@ -1,15 +1,16 @@
 from sklearn.linear_model import LinearRegression
 
 from src.utilities.program_args import parse_program_args
+from src.utilities.constants import Verbose
 from src.embeddings.sentence_embeddings import sum_embeddings, concat_embeddings, DataManagerWithSentenceEmbeddings
 
 
 class STRLinearRegression:
-    def __init__(self, language: str, pooling_function, verbose: str = 'default'):
+    def __init__(self, language: str, pooling_function, verbose: Verbose = Verbose.DEFAULT):
         self.name = 'Linear Regression by '
         self.name += 'Summing' if pooling_function == sum_embeddings else 'Concatenating'
         self.name += ' Sentence Embeddings'
-        self.verbose = verbose
+        self.verbose: Verbose = verbose
 
         self.data = DataManagerWithSentenceEmbeddings.load(language)
         self.regressor = LinearRegression()
@@ -22,7 +23,7 @@ class STRLinearRegression:
 
         predicted_scores = self.regressor.predict(pooled_embeddings)
         self.data.calculate_spearman_correlation(self.data.scores[dataset], predicted_scores)
-        if self.verbose == 'default' or self.verbose == 'expressive':
+        if self.verbose == Verbose.DEFAULT or self.verbose == Verbose.EXPRESSIVE:
             self.data.print_results(self.name, dataset)
 
     def evaluate(self, dataset: str = 'Test') -> None:
@@ -35,11 +36,11 @@ class STRLinearRegression:
 
 
 def evaluate_linear_regression(language: str) -> None:
-    lr_sum = STRLinearRegression(language=language, pooling_function=sum_embeddings, verbose='silent')
+    lr_sum = STRLinearRegression(language=language, pooling_function=sum_embeddings, verbose=Verbose.SILENT)
     lr_sum.train(dataset='Train')
     lr_sum.evaluate()
 
-    lr_concat = STRLinearRegression(language=language, pooling_function=concat_embeddings, verbose='silent')
+    lr_concat = STRLinearRegression(language=language, pooling_function=concat_embeddings, verbose=Verbose.SILENT)
     lr_concat.train(dataset='Train')
     lr_concat.evaluate()
 

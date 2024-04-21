@@ -2,7 +2,7 @@ import pandas as pd
 import os
 from scipy.stats import spearmanr
 
-from .constants import SENTENCE_SEPARATOR_FOR_LANGAUGE as SEPARATOR, FULL_LANGUAGE_NAME as FULL
+from .constants import SENTENCE_SEPARATOR as SEP, FULL_LANGUAGE_NAME as FULL
 
 
 def print_missing_dataset_warning(old_dataset: str, new_dataset: str) -> None:
@@ -24,11 +24,11 @@ def load_scores(df: pd.DataFrame) -> list[float]:
     return scores
 
 
-def load_sentence_pairs(df: pd.DataFrame, language: str) -> list[list[str]]:
+def load_sentence_pairs(df: pd.DataFrame) -> list[list[str]]:
     sentences = df["Text"].tolist()
     sentence_pairs = []
     for sentence in sentences:
-        sentence_1, sentence_2 = sentence.split(SEPARATOR[language])
+        sentence_1, sentence_2 = sentence.split(SEP)
         sentence_pairs.append([sentence_1, sentence_2])
     return sentence_pairs
 
@@ -42,7 +42,7 @@ def load_data(language: str, dataset: str) -> tuple[list[float], list[list[str]]
         replaced = True
     df = pd.read_csv(path + file)
     scores = load_scores(df)
-    sentence_pairs = load_sentence_pairs(df, language)
+    sentence_pairs = load_sentence_pairs(df)
     return scores, sentence_pairs, replaced
 
 
