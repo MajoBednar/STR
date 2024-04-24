@@ -11,13 +11,6 @@ def sentence_pairs_to_pair_of_sentences(sentence_pairs: list[list[str]]) -> tupl
     return list(list_1), list(list_2)
 
 
-def create_sentence_embeddings(model, sentence_pairs: list[list[str]]) -> tuple:
-    pair_of_sentences = sentence_pairs_to_pair_of_sentences(sentence_pairs)
-    sentence_embeddings1 = model.encode(pair_of_sentences[0])
-    sentence_embeddings2 = model.encode(pair_of_sentences[1])
-    return sentence_embeddings1, sentence_embeddings2
-
-
 def sum_embeddings(embeddings1, embeddings2):
     return embeddings1 + embeddings2
 
@@ -32,14 +25,20 @@ class DataManagerWithSentenceEmbeddings(DataManager):
         self.sentence_transformer = SentenceTransformer(sentence_transformer_model)
 
         self.sentence_embeddings = {
-            'Train': create_sentence_embeddings(self.sentence_transformer, self.sentence_pairs['Train']),
-            'Dev': create_sentence_embeddings(self.sentence_transformer, self.sentence_pairs['Dev']),
-            'Test': create_sentence_embeddings(self.sentence_transformer, self.sentence_pairs['Test']),
+            'Train': self.__create_sentence_embeddings(self.sentence_pairs['Train']),
+            'Dev': self.__create_sentence_embeddings(self.sentence_pairs['Dev']),
+            'Test': self.__create_sentence_embeddings(self.sentence_pairs['Test']),
         }
         self.__sentence_embeddings_train_dev()
         self.embedding_dim = len(self.sentence_embeddings['Train'][0][0])
 
         self._save(sentence_transformer_model)
+
+    def __create_sentence_embeddings(self, sentence_pairs: list[list[str]]) -> tuple:
+        pair_of_sentences = sentence_pairs_to_pair_of_sentences(sentence_pairs)
+        sentence_embeddings1 = self.sentence_transformer.encode(pair_of_sentences[0])
+        sentence_embeddings2 = self.sentence_transformer.encode(pair_of_sentences[1])
+        return sentence_embeddings1, sentence_embeddings2
 
     def __sentence_embeddings_train_dev(self) -> None:
         train_dev1 = np.concatenate((self.sentence_embeddings['Train'][0], self.sentence_embeddings['Dev'][0]), axis=0)
