@@ -7,9 +7,9 @@ from src.utilities.constants import Verbose
 from src.embeddings.sentence_embeddings import DataManagerWithSentenceEmbeddings
 
 
-class SiameseMLPForSentenceEmbeddings(nn.Module):
+class SiameseMLPArchitecture(nn.Module):
     def __init__(self, input_dim):
-        super(SiameseMLPForSentenceEmbeddings, self).__init__()
+        super(SiameseMLPArchitecture, self).__init__()
 
         self.shared_branch = nn.Sequential(
             nn.Linear(input_dim, 512),
@@ -44,7 +44,7 @@ class SiameseMLP:
         self.data = DataManagerWithSentenceEmbeddings.load(language)
         self.verbose: Verbose = verbose
 
-        self.model = SiameseMLPForSentenceEmbeddings(self.data.embedding_dim)
+        self.model = SiameseMLPArchitecture(self.data.embedding_dim)
         self.loss_function = nn.MSELoss()
         self.optimizer = Adam(self.model.parameters(), lr=learning_rate)
 

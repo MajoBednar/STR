@@ -47,17 +47,17 @@ class DataManagerWithSentenceEmbeddings(DataManager):
         self.sentence_embeddings['Train+Dev'] = train_dev1, train_dev2
 
     def _save(self, sentence_transformer_model: str):
-        directory = 'data/embeddings/'
+        directory = 'data/sentence_embeddings/'
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-        path = directory + 'sentence_embeddings_' + sentence_transformer_model + '_' + self.language + '.pkl'
+        path = directory + sentence_transformer_model + '_' + self.language + '.pkl'
         with open(path, 'wb') as file:
             pkl.dump(self, file)
 
     @staticmethod
     def load(language: str, sentence_transformer_model: str = 'all-MiniLM-L6-v2'):
-        path = 'data/embeddings/sentence_embeddings_' + sentence_transformer_model + '_' + language + '.pkl'
+        path = 'data/sentence_embeddings/' + sentence_transformer_model + '_' + language + '.pkl'
         if os.path.exists(path):
             with open(path, 'rb') as file:
                 return pkl.load(file)
