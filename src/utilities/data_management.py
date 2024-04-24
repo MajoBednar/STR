@@ -36,6 +36,11 @@ class DataManager:
             print(f'WARNING: Some datasets were missing and were replaced with existing datasets')
         print()
 
+    @staticmethod
+    def sentence_pairs_to_pair_of_sentences(sentence_pairs: list[list[str]]) -> tuple[list[str], list[str]]:
+        list_1, list_2 = zip(*sentence_pairs)
+        return list(list_1), list(list_2)
+
     def __initialize_data(self) -> tuple:
         scores_train, sentence_pairs_train = self.__load_data(dataset='_train')
         scores_dev, sentence_pairs_dev = self.__load_data(dataset='_dev_with_labels')
