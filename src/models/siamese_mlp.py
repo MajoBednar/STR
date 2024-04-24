@@ -7,37 +7,9 @@ from src.utilities.constants import Verbose
 from src.embeddings.sentence_embeddings import DataManagerWithSentenceEmbeddings
 
 
-class SiameseNetworkForSentences(nn.Module):
-    # def __init__(self, input_dim):
-    #     super(SiameseNetworkForSentences, self).__init__()
-    #
-    #     # Shared branch of the Siamese network
-    #     self.shared_branch = nn.Sequential(
-    #         nn.Linear(input_dim, 64),
-    #         nn.ReLU(),
-    #         nn.Linear(64, 32),
-    #         nn.ReLU(),
-    #         nn.Linear(32, 16),
-    #         nn.ReLU()
-    #     )
-    #
-    #     # Additional layers for combining outputs (optional)
-    #     self.fc = nn.Linear(16, 1)
-    #
-    # def forward(self, x1, x2):
-    #     # Process each sentence embedding through the shared branch
-    #     out1 = self.shared_branch(x1)
-    #     out2 = self.shared_branch(x2)
-    #
-    #     # Combine the outputs of the shared branches
-    #     combined = torch.abs(out1 - out2)  # Example of element-wise subtraction
-    #
-    #     # Additional layers for combining outputs (optional)
-    #     combined = self.fc(combined)
-    #
-    #     return combined
+class SiameseMLPForSentenceEmbeddings(nn.Module):
     def __init__(self, input_dim):
-        super(SiameseNetworkForSentences, self).__init__()
+        super(SiameseMLPForSentenceEmbeddings, self).__init__()
 
         self.shared_branch = nn.Sequential(
             nn.Linear(input_dim, 512),
@@ -66,13 +38,13 @@ class SiameseNetworkForSentences(nn.Module):
         return out
 
 
-class SiameseSentence:
+class SiameseMLP:
     def __init__(self, language: str, learning_rate: float = 0.001, verbose: Verbose = Verbose.DEFAULT):
         self.name = 'Siamese Network for Sentence Embeddings'
         self.data = DataManagerWithSentenceEmbeddings.load(language)
         self.verbose: Verbose = verbose
 
-        self.model = SiameseNetworkForSentences(self.data.embedding_dim)
+        self.model = SiameseMLPForSentenceEmbeddings(self.data.embedding_dim)
         self.loss_function = nn.MSELoss()
         self.optimizer = Adam(self.model.parameters(), lr=learning_rate)
 
@@ -106,7 +78,8 @@ class SiameseSentence:
                 test_loss = self.loss_function(predicted_scores_test, true_scores_test)
             if self.verbose == Verbose.DEFAULT or self.verbose == Verbose.EXPRESSIVE:
                 print(f"Epoch {epoch + 1}/{epochs}, Loss: {epoch_loss:.4f}, Test Loss: {test_loss:.4f}")
-            # self.evaluate()
+            if self.verbose == Verbose.EXPRESSIVE:
+                self.evaluate()
 
     def evaluate(self, dataset: str = 'Test'):
         input1 = torch.tensor(self.data.sentence_embeddings[dataset][0])
@@ -114,19 +87,20 @@ class SiameseSentence:
         with torch.no_grad():
             predicted_scores = self.model(input1, input2)
 
-        # print(predicted_scores)
+        if self.verbose == Verbose.EXPRESSIVE:
+            print(predicted_scores)
         self.data.calculate_spearman_correlation(self.data.scores[dataset], predicted_scores)
         self.data.print_results(self.name, dataset)
 
 
 def evaluate_siamese_sentence(language: str) -> None:
-    siamese_sentence = SiameseSentence(language=language, verbose=Verbose.SILENT)
+    siamese_sentence = SiameseMLP(language=language, verbose=Verbose.SILENT)
     siamese_sentence.train(epochs=10)
     siamese_sentence.evaluate()
 
 
 def main() -> None:
-    siamese_sentence = SiameseSentence(language=parse_program_args())
+    siamese_sentence = SiameseMLP(language=parse_program_args())
     siamese_sentence.train(epochs=10)
     siamese_sentence.evaluate(dataset='Train')
     siamese_sentence.evaluate()

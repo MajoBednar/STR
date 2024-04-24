@@ -1,6 +1,6 @@
 from src.utilities.program_args import parse_program_args
 from src.baselines import lexical_overlap as lo, cosine_similarity as cs, linear_regression as lr
-from src.models import siamese_sentence as ss
+from src.models import siamese_mlp as ss
 
 
 if __name__ == '__main__':
