@@ -22,7 +22,7 @@ class DataManagerWithSentenceEmbeddings(DataManager):
         self.sentence_embeddings = {
             'Train': self.__create_sentence_embeddings(self.sentence_pairs['Train']),
             'Dev': self.__create_sentence_embeddings(self.sentence_pairs['Dev']),
-            'Test': self.__create_sentence_embeddings(self.sentence_pairs['Test']),
+            'Test': self.__create_sentence_embeddings(self.sentence_pairs['Test'])
         }
         self.__sentence_embeddings_train_dev()
         self.embedding_dim = len(self.sentence_embeddings['Train'][0][0])
@@ -36,9 +36,9 @@ class DataManagerWithSentenceEmbeddings(DataManager):
         return sentence_embeddings1, sentence_embeddings2
 
     def __sentence_embeddings_train_dev(self) -> None:
-        train_dev1 = np.concatenate((self.sentence_embeddings['Train'][0], self.sentence_embeddings['Dev'][0]), axis=0)
-        train_dev2 = np.concatenate((self.sentence_embeddings['Train'][1], self.sentence_embeddings['Dev'][1]), axis=0)
-        self.sentence_embeddings['Train+Dev'] = train_dev1, train_dev2
+        train_dev_embeddings = DataManager._embeddings_train_dev(self.sentence_embeddings['Train'],
+                                                                 self.sentence_embeddings['Dev'])
+        self.sentence_embeddings['Train+Dev'] = train_dev_embeddings
 
     def _save(self, sentence_transformer_model: str):
         directory = 'data/sentence_embeddings/'

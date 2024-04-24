@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import numpy as np
 from scipy.stats import spearmanr
 
 from .constants import SENTENCE_SEPARATOR as SEP, FULL_LANGUAGE_NAME as FULL
@@ -40,6 +41,12 @@ class DataManager:
     def sentence_pairs_to_pair_of_sentences(sentence_pairs: list[list[str]]) -> tuple[list[str], list[str]]:
         list_1, list_2 = zip(*sentence_pairs)
         return list(list_1), list(list_2)
+
+    @staticmethod
+    def _embeddings_train_dev(train_embeddings, dev_embeddings) -> tuple:
+        train_dev1 = np.concatenate((train_embeddings[0], dev_embeddings[0]), axis=0)
+        train_dev2 = np.concatenate((train_embeddings[1], dev_embeddings[1]), axis=0)
+        return train_dev1, train_dev2
 
     def __initialize_data(self) -> tuple:
         scores_train, sentence_pairs_train = self.__load_data(dataset='_train')
