@@ -93,17 +93,17 @@ class SiameseMLP:
         self.data.print_results(self.name, dataset)
 
 
-def evaluate_siamese_sentence(language: str) -> None:
-    siamese_sentence = SiameseMLP(language=language, verbose=Verbose.SILENT)
-    siamese_sentence.train(epochs=10)
-    siamese_sentence.evaluate()
+def evaluate_siamese_mlp(language: str) -> None:
+    siamese_mlp = SiameseMLP(language=language, verbose=Verbose.SILENT)
+    siamese_mlp.train(epochs=10)
+    siamese_mlp.evaluate()
 
 
 def main() -> None:
-    siamese_sentence = SiameseMLP(language=parse_program_args())
-    siamese_sentence.train(epochs=10)
-    siamese_sentence.evaluate(dataset='Train')
-    siamese_sentence.evaluate()
+    siamese_mlp = SiameseMLP(language=parse_program_args())
+    siamese_mlp.train(epochs=10)
+    siamese_mlp.evaluate(dataset='Train')
+    siamese_mlp.evaluate()
 
 
 if __name__ == '__main__':
