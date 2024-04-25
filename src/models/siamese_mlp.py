@@ -40,7 +40,7 @@ class SiameseMLPArchitecture(nn.Module):
 
 class SiameseMLP:
     def __init__(self, language: str, learning_rate: float = 0.001, verbose: Verbose = Verbose.DEFAULT):
-        self.name = 'Siamese Network for Sentence Embeddings'
+        self.name = 'Siamese MLP (using Sentence Embeddings)'
         self.data = DataManagerWithSentenceEmbeddings.load(language)
         self.verbose: Verbose = verbose
 
