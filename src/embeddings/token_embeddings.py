@@ -35,16 +35,26 @@ class DataManagerWithTokenEmbeddings(DataManager):
         all_embeddings1 = []
         all_embeddings2 = []
 
-        for i in range(0, len(pair_of_sentences[0]), batch_size):
-            batch_sentences1 = pair_of_sentences[0][i:i + batch_size]
-            batch_sentences2 = pair_of_sentences[1][i:i + batch_size]
+        tokenized_sentences1 = self.tokenizer(pair_of_sentences[0], return_tensors="pt", padding=True, truncation=True)
+        tokenized_sentences2 = self.tokenizer(pair_of_sentences[1], return_tensors="pt", padding=True, truncation=True)
 
-            tokenized_sentences1 = self.tokenizer(batch_sentences1, return_tensors="pt", padding=True, truncation=True)
-            tokenized_sentences2 = self.tokenizer(batch_sentences2, return_tensors="pt", padding=True, truncation=True)
+        for i in range(0, len(pair_of_sentences[0]), batch_size):
+            # batch_sentences1 = pair_of_sentences[0][i:i + batch_size]
+            # batch_sentences2 = pair_of_sentences[1][i:i + batch_size]
+
+            batch_sentences1 = tokenized_sentences1[i:i + batch_size]
+            batch_sentences2 = tokenized_sentences2[i:i + batch_size]
+
+            # tokenized_sentences1 = self.tokenizer(batch_sentences1, return_tensors="pt", padding=True, truncation=True)
+            # tokenized_sentences2 = self.tokenizer(batch_sentences2, return_tensors="pt", padding=True, truncation=True)
+
+            # with torch.no_grad():
+            #     outputs1 = self.token_transformer(**tokenized_sentences1)
+            #     outputs2 = self.token_transformer(**tokenized_sentences2)
 
             with torch.no_grad():
-                outputs1 = self.token_transformer(**tokenized_sentences1)
-                outputs2 = self.token_transformer(**tokenized_sentences2)
+                outputs1 = self.token_transformer(**batch_sentences1)
+                outputs2 = self.token_transformer(**batch_sentences2)
 
             token_embeddings1 = outputs1.last_hidden_state
             token_embeddings2 = outputs2.last_hidden_state
@@ -59,12 +69,17 @@ class DataManagerWithTokenEmbeddings(DataManager):
         max_tokens2 = max(embeddings.shape[1] for embeddings in all_embeddings2)
         print('Max tokens', max_tokens1, max_tokens2)
         print(all_embeddings1[0].shape)
-        padded_embeddings1 = [torch.nn.functional.pad(embeddings, (0, 0, max_tokens1 - embeddings.shape[1], 0), value=float('nan')) for embeddings in all_embeddings1]
-        padded_embeddings2 = [torch.nn.functional.pad(embeddings, (0, 0, max_tokens2 - embeddings.shape[1], 0), value=float('nan')) for embeddings in all_embeddings2]
-        print(padded_embeddings1[0].shape)
-        concatenated_embeddings1 = torch.cat(padded_embeddings1, dim=0)
+        # padded_embeddings1 = [torch.nn.functional.pad(embeddings, (0, 0, max_tokens1 - embeddings.shape[1], 0), value=float('nan')) for embeddings in all_embeddings1]
+        # padded_embeddings2 = [torch.nn.functional.pad(embeddings, (0, 0, max_tokens2 - embeddings.shape[1], 0), value=float('nan')) for embeddings in all_embeddings2]
+        # print(padded_embeddings1[0].shape)
+        # concatenated_embeddings1 = torch.cat(padded_embeddings1, dim=0)
+        # print(concatenated_embeddings1.shape)
+        # concatenated_embeddings2 = torch.cat(padded_embeddings2, dim=0)
+
+        print(all_embeddings1[0].shape)
+        concatenated_embeddings1 = torch.cat(all_embeddings1, dim=0)
         print(concatenated_embeddings1.shape)
-        concatenated_embeddings2 = torch.cat(padded_embeddings2, dim=0)
+        concatenated_embeddings2 = torch.cat(all_embeddings2, dim=0)
         return concatenated_embeddings1, concatenated_embeddings2
 
         # tokenized_sentences1 = self.tokenizer(pair_of_sentences[0][:3], return_tensors='pt', padding=True, truncation=True)

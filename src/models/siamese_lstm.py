@@ -102,9 +102,9 @@ def main() -> None:
     siamese_lstm = SiameseLSTM(language=parse_program_args())
     print('Embedding dim:', siamese_lstm.data.embedding_dim)
     print('Number of tokens:', siamese_lstm.data.number_of_tokens)
-    siamese_lstm.train(epochs=10)
+    # siamese_lstm.train(epochs=10)
     # siamese_lstm.evaluate(dataset='Train')
-    siamese_lstm.evaluate()
+    # siamese_lstm.evaluate()
 
 
 if __name__ == '__main__':
