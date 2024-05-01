@@ -26,7 +26,6 @@ class SiameseMLPArchitecture(nn.Module):
             nn.Linear(128, 32),
             nn.ReLU(),
             nn.Linear(32, 1),
-            # nn.ReLU(),
         )
 
     def forward(self, embedding_sentence1, embedding_sentence2):
@@ -40,7 +39,7 @@ class SiameseMLPArchitecture(nn.Module):
 
 class SiameseMLP:
     def __init__(self, language: str, learning_rate: float = 0.001, verbose: Verbose = Verbose.DEFAULT):
-        self.name = 'Siamese MLP (using Sentence Embeddings)'
+        self.name = 'Siamese MLP'
         self.data = DataManagerWithSentenceEmbeddings.load(language)
         self.verbose: Verbose = verbose
 
@@ -90,7 +89,7 @@ class SiameseMLP:
         if self.verbose == Verbose.EXPRESSIVE:
             print(predicted_scores)
         self.data.calculate_spearman_correlation(self.data.scores[dataset], predicted_scores)
-        self.data.print_results(self.name, dataset)
+        self.data.print_results(self.name, self.data.sentence_transformer_name, dataset)
 
 
 def evaluate_siamese_mlp(language: str) -> None:

@@ -28,9 +28,10 @@ class DataManager:
     def calculate_spearman_correlation(self, true_scores, predicted_scores):
         self.spearman_correlation, _ = spearmanr(true_scores, predicted_scores)
 
-    def print_results(self, model_name: str, dataset: str = 'Test') -> None:
-        print(f'Model:                {model_name}')
+    def print_results(self, relatedness_model: str, transformer_model: str, dataset: str = 'Test') -> None:
         print(f'Language:             {FULL[self.language]}')
+        print(f'Transformer Model:    {transformer_model}')
+        print(f'STR Model:            {relatedness_model}')
         print(f'Set:                  {dataset}')
         print(f'Spearman Correlation: {self.spearman_correlation:.3f}')
         if self.warning:

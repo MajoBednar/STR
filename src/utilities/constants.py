@@ -13,6 +13,13 @@ FULL_LANGUAGE_NAME = {
 
 SENTENCE_SEPARATOR = '\n'
 
+SENTENCE_TRANSFORMERS = {
+    'all MiniLM': 'all-MiniLM-L6-v2'
+}
+
+TOKEN_TRANSFORMERS = {
+    'base uncased BERT': 'bert-base-uncased'
+}
 
 class Verbose(Enum):
     SILENT = 0

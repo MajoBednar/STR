@@ -4,13 +4,15 @@ import os
 import pickle as pkl
 
 from src.utilities.data_management import DataManager
+from src.utilities.constants import TOKEN_TRANSFORMERS as TT
 
 
 class DataManagerWithTokenEmbeddings(DataManager):
-    def __init__(self, language, token_transformer_model_name: str = 'bert-base-uncased'):
+    def __init__(self, language, token_transformer_model_name: str = 'base uncased BERT'):
         super().__init__(language)
-        self.tokenizer = AutoTokenizer.from_pretrained(token_transformer_model_name)
-        self.token_transformer = AutoModel.from_pretrained(token_transformer_model_name)
+        self.token_transformer_name = token_transformer_model_name
+        self.tokenizer = AutoTokenizer.from_pretrained(TT[token_transformer_model_name])
+        self.token_transformer = AutoModel.from_pretrained(TT[token_transformer_model_name])
 
         self.token_embeddings = {
             'Train': self.__create_token_embeddings(self.sentence_pairs['Train']),

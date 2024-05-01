@@ -4,6 +4,7 @@ import pickle as pkl
 import os
 
 from src.utilities.data_management import DataManager
+from src.utilities.constants import SENTENCE_TRANSFORMERS as ST
 
 
 def sum_embeddings(embeddings1, embeddings2):
@@ -15,9 +16,10 @@ def concat_embeddings(embeddings1, embeddings2):
 
 
 class DataManagerWithSentenceEmbeddings(DataManager):
-    def __init__(self, language, sentence_transformer_model_name: str = 'all-MiniLM-L6-v2'):
+    def __init__(self, language, sentence_transformer_model_name: str = 'all MiniLM'):
         super().__init__(language)
-        self.sentence_transformer = SentenceTransformer(sentence_transformer_model_name)
+        self.sentence_transformer_name = sentence_transformer_model_name + ' Sentence Transformer'
+        self.sentence_transformer = SentenceTransformer(ST[sentence_transformer_model_name])
 
         self.sentence_embeddings = {
             'Train': self.__create_sentence_embeddings(self.sentence_pairs['Train']),
