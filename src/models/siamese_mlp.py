@@ -5,6 +5,7 @@ from torch.optim import Adam
 from src.utilities.program_args import parse_program_args
 from src.utilities.constants import Verbose
 from src.embeddings.sentence_embeddings import DataManagerWithSentenceEmbeddings
+from .relatedness_model_base import RelatednessModelBase
 
 
 class SiameseMLPArchitecture(nn.Module):
@@ -37,11 +38,11 @@ class SiameseMLPArchitecture(nn.Module):
         return out
 
 
-class SiameseMLP:
+class SiameseMLP(RelatednessModelBase):
     def __init__(self, language: str, learning_rate: float = 0.001, verbose: Verbose = Verbose.DEFAULT):
+        super().__init__(verbose)
         self.name = 'Siamese MLP'
         self.data = DataManagerWithSentenceEmbeddings.load(language)
-        self.verbose: Verbose = verbose
 
         self.model = SiameseMLPArchitecture(self.data.embedding_dim)
         self.loss_function = nn.MSELoss()

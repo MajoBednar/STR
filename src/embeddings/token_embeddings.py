@@ -8,7 +8,7 @@ from src.utilities.constants import TOKEN_TRANSFORMERS as TT
 
 
 class DataManagerWithTokenEmbeddings(DataManager):
-    def __init__(self, language, token_transformer_model_name: str = 'base uncased BERT'):
+    def __init__(self, language, token_transformer_model_name: str):
         super().__init__(language)
         self.token_transformer_name = token_transformer_model_name
         self.tokenizer = AutoTokenizer.from_pretrained(TT[token_transformer_model_name])
@@ -120,9 +120,9 @@ class DataManagerWithTokenEmbeddings(DataManager):
             pkl.dump(self, file)
 
     @staticmethod
-    def load(language: str, token_transformer_model: str = 'bert-base-uncased'):
+    def load(language: str, token_transformer_model: str = 'base uncased BERT'):
         path = 'data/token_embeddings/' + token_transformer_model + '_' + language + '.pkl'
         if os.path.exists(path):
             with open(path, 'rb') as file:
                 return pkl.load(file)
-        return DataManagerWithTokenEmbeddings(language)
+        return DataManagerWithTokenEmbeddings(language, token_transformer_model)

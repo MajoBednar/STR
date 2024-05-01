@@ -16,7 +16,7 @@ def concat_embeddings(embeddings1, embeddings2):
 
 
 class DataManagerWithSentenceEmbeddings(DataManager):
-    def __init__(self, language, sentence_transformer_model_name: str = 'all MiniLM'):
+    def __init__(self, language, sentence_transformer_model_name: str):
         super().__init__(language)
         self.sentence_transformer_name = sentence_transformer_model_name + ' Sentence Transformer'
         self.sentence_transformer = SentenceTransformer(ST[sentence_transformer_model_name])
@@ -52,9 +52,9 @@ class DataManagerWithSentenceEmbeddings(DataManager):
             pkl.dump(self, file)
 
     @staticmethod
-    def load(language: str, sentence_transformer_model: str = 'all-MiniLM-L6-v2'):
+    def load(language: str, sentence_transformer_model: str = 'all MiniLM'):
         path = 'data/sentence_embeddings/' + sentence_transformer_model + '_' + language + '.pkl'
         if os.path.exists(path):
             with open(path, 'rb') as file:
                 return pkl.load(file)
-        return DataManagerWithSentenceEmbeddings(language)
+        return DataManagerWithSentenceEmbeddings(language, sentence_transformer_model)
