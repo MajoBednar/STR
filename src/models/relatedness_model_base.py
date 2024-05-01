@@ -7,12 +7,12 @@ class RelatednessModelBase:
         self.name = 'Relatedness Model Base'
         self.data = AbstractDataManager
 
-        self.model = AbstractArchitecture
+        self.model = AbstractRelatednessArchitecture
         self.loss_function = abstract_loss_function
         self.optimizer = AbstractOptimizer
 
 
-class AbstractArchitecture:
+class AbstractRelatednessArchitecture:
     pass
 
 
