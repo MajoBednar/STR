@@ -42,8 +42,17 @@ class DataManagerWithTokenEmbeddings(DataManager):
             # batch_sentences1 = pair_of_sentences[0][i:i + batch_size]
             # batch_sentences2 = pair_of_sentences[1][i:i + batch_size]
 
-            batch_sentences1 = tokenized_sentences1[i:i + batch_size]
-            batch_sentences2 = tokenized_sentences2[i:i + batch_size]
+            # batch_sentences1 = tokenized_sentences1[i:i + batch_size]
+            # batch_sentences2 = tokenized_sentences2[i:i + batch_size]
+
+            batch_inputs1 = {
+                'input_ids': tokenized_sentences1['input_ids'][i:i + batch_size],
+                'attention_mask': tokenized_sentences1['attention_mask'][i:i + batch_size],
+            }
+            batch_inputs2 = {
+                'input_ids': tokenized_sentences2['input_ids'][i:i + batch_size],
+                'attention_mask': tokenized_sentences2['attention_mask'][i:i + batch_size],
+            }
 
             # tokenized_sentences1 = self.tokenizer(batch_sentences1, return_tensors="pt", padding=True, truncation=True)
             # tokenized_sentences2 = self.tokenizer(batch_sentences2, return_tensors="pt", padding=True, truncation=True)
@@ -53,8 +62,8 @@ class DataManagerWithTokenEmbeddings(DataManager):
             #     outputs2 = self.token_transformer(**tokenized_sentences2)
 
             with torch.no_grad():
-                outputs1 = self.token_transformer(**batch_sentences1)
-                outputs2 = self.token_transformer(**batch_sentences2)
+                outputs1 = self.token_transformer(**batch_inputs1)
+                outputs2 = self.token_transformer(**batch_inputs2)
 
             token_embeddings1 = outputs1.last_hidden_state
             token_embeddings2 = outputs2.last_hidden_state
