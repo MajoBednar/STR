@@ -52,7 +52,7 @@ class DataManagerWithSentenceEmbeddings(DataManager):
             pkl.dump(self, file)
 
     @staticmethod
-    def load(language: str, sentence_transformer_model: str = 'all MiniLM'):
+    def load(language: str, sentence_transformer_model: str):
         path = 'data/sentence_embeddings/' + sentence_transformer_model + '_' + language + '.pkl'
         if os.path.exists(path):
             with open(path, 'rb') as file:

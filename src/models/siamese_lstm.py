@@ -88,7 +88,7 @@ class SiameseLSTM:
 
         if self.verbose == Verbose.EXPRESSIVE:
             print(predicted_scores)
-        self.data.calculate_spearman_correlation(self.data.scores[dataset], predicted_scores)
+        self.data.set_spearman_correlation(self.data.scores[dataset], predicted_scores)
         self.data.print_results(self.name, self.data.token_transformer_name, dataset)
 
 

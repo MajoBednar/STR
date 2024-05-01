@@ -14,7 +14,8 @@ FULL_LANGUAGE_NAME = {
 SENTENCE_SEPARATOR = '\n'
 
 SENTENCE_TRANSFORMERS = {
-    'all MiniLM': 'all-MiniLM-L6-v2'
+    'all MiniLM': 'all-MiniLM-L6-v2',
+    'paraphrase multilingual miniLM': 'paraphrase-multilingual-MiniLM-L12-v2'
 }
 
 TOKEN_TRANSFORMERS = {

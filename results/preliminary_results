@@ -1,0 +1,26 @@
+ENGLISH
+
+Language:             English
+Transformer Model:    all MiniLM Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Train
+Spearman Correlation: 0.898
+
+Language:             English
+Transformer Model:    all MiniLM Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Test
+Spearman Correlation: 0.506
+
+Language:             English
+Transformer Model:    paraphrase multilingual miniLM Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Train
+Spearman Correlation: 0.885
+
+Language:             English
+Transformer Model:    paraphrase multilingual miniLM Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Test
+Spearman Correlation: 0.562
+

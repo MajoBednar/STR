@@ -22,7 +22,7 @@ class STRLinearRegression:
         self.regressor.fit(pooled_embeddings, self.data.scores[dataset])
 
         predicted_scores = self.regressor.predict(pooled_embeddings)
-        self.data.calculate_spearman_correlation(self.data.scores[dataset], predicted_scores)
+        self.data.set_spearman_correlation(self.data.scores[dataset], predicted_scores)
         if self.verbose == Verbose.DEFAULT or self.verbose == Verbose.EXPRESSIVE:
             self.data.print_results(self.name, dataset)
 
@@ -31,7 +31,7 @@ class STRLinearRegression:
         pooled_embeddings = self.pooling_function(embeddings1, embeddings2)
         predicted_scores = self.regressor.predict(pooled_embeddings)
 
-        self.data.calculate_spearman_correlation(self.data.scores[dataset], predicted_scores)
+        self.data.set_spearman_correlation(self.data.scores[dataset], predicted_scores)
         self.data.print_results(self.name, dataset)
 
 

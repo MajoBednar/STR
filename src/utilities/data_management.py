@@ -25,8 +25,13 @@ class DataManager:
         }
         self.spearman_correlation: float = 0
 
-    def calculate_spearman_correlation(self, true_scores, predicted_scores):
-        self.spearman_correlation, _ = spearmanr(true_scores, predicted_scores)
+    def set_spearman_correlation(self, true_scores, predicted_scores):
+        self.spearman_correlation = self.calculate_spearman_correlation(true_scores, predicted_scores)
+
+    @staticmethod
+    def calculate_spearman_correlation(true_scores, predicted_scores):
+        spearman_correlation, _ = spearmanr(true_scores, predicted_scores)
+        return spearman_correlation
 
     def print_results(self, relatedness_model: str, transformer_model: str, dataset: str = 'Test') -> None:
         print(f'Language:             {FULL[self.language]}')

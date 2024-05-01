@@ -24,7 +24,7 @@ class STRLexicalOverlap:
         for pair in self.data.sentence_pairs[dataset]:
             lexical_overlap_scores.append(self.calculate_dice_coefficient(pair[0], pair[1]))
 
-        self.data.calculate_spearman_correlation(self.data.scores[dataset], lexical_overlap_scores)
+        self.data.set_spearman_correlation(self.data.scores[dataset], lexical_overlap_scores)
         self.data.print_results(self.name, dataset)
 
 
