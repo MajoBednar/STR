@@ -20,6 +20,9 @@ mar         MLP         Sentence          mBERT                     0.404
 mar         MLP         Sentence          XLMR                      0.348
 mar         MLP         Sentence          LaBSE                     0.505
 
+pan         LSTM        Tokens            mBERT                     0.392
+afr         LSTM        Tokens            mBERT                     0.579
+
 Language:             English
 Transformer Model:    all MiniLM Sentence Transformer
 STR Model:            Siamese MLP
@@ -160,4 +163,31 @@ Transformer Model:    all MiniLM Sentence Transformer
 STR Model:            Siamese MLP
 Set:                  Test
 Spearman Correlation: 0.476
+WARNING: Some datasets were missing and were replaced with existing datasets
+
+Language:             Punjabi
+Transformer Model:    mBERT
+STR Model:            Siamese LSTM (using Token Embeddings)
+Set:                  Train
+Spearman Correlation: 0.962
+WARNING: Some datasets were missing and were replaced with existing datasets
+
+Language:             Punjabi
+Transformer Model:    mBERT
+STR Model:            Siamese LSTM (using Token Embeddings)
+Set:                  Test
+Spearman Correlation: 0.392
+WARNING: Some datasets were missing and were replaced with existing datasets
+
+Language:             Afrikaans
+Transformer Model:    mBERT
+Set:                  Train
+Spearman Correlation: 0.955
+WARNING: Some datasets were missing and were replaced with existing datasets
+
+Language:             Afrikaans
+Transformer Model:    mBERT
+STR Model:            Siamese LSTM (using Token Embeddings)
+Set:                  Test
+Spearman Correlation: 0.579
 WARNING: Some datasets were missing and were replaced with existing datasets

@@ -102,7 +102,7 @@ def evaluate_siamese_lstm(language: str) -> None:
 
 
 def main() -> None:
-    siamese_lstm = SiameseLSTM(parse_program_args(), 'LaBSE')
+    siamese_lstm = SiameseLSTM(parse_program_args(), 'mBERT')
     # print('Embedding dim:', siamese_lstm.data.embedding_dim)
     # print('Number of tokens in Train set 1st sentence from each pair:',
     #       len(siamese_lstm.data.token_embeddings['Train'][0][0]))
