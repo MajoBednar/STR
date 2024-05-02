@@ -1,10 +1,24 @@
 LANGUAGE | STR MODEL | TRANSFORMER TYPE | TRANSFORMER MODEL | CORRELATION
-eng         MLP         Sentence            all MiniLM              0.506
+eng         MLP         Sentence          all MiniLM                0.506
 eng         MLP         Sentence          para multi miniLM         0.562
-eng         MLP         Sentence            mBERT                   0.350
-eng         MLP         Sentence            XLMR                    0.293
-eng         MLP         Sentence            LaBSE                   0.447
+eng         MLP         Sentence          mBERT                     0.350
+eng         MLP         Sentence          XLMR                      0.293
+eng         MLP         Sentence          LaBSE                     0.447
 
+esp         MLP         Sentence          all MiniLM                0.476
+esp         MLP         Sentence          para multi miniLM         0.
+esp         MLP         Sentence          mBERT                     0.
+esp         MLP         Sentence          XLMR                      0.
+esp         MLP         Sentence          LaBSE                     0.
+esp         MLP         Sentence          ALBETO                    0.
+esp         MLP         Sentence          BETO                      0.567
+esp         MLP         Sentence          RoBERTa-BNE               0.
+
+mar         MLP         Sentence          all MiniLM                0.208
+mar         MLP         Sentence          para multi miniLM         0.433
+mar         MLP         Sentence          mBERT                     0.404
+mar         MLP         Sentence          XLMR                      0.348
+mar         MLP         Sentence          LaBSE                     0.505
 
 Language:             English
 Transformer Model:    all MiniLM Sentence Transformer
@@ -65,3 +79,85 @@ Transformer Model:    LaBSE Sentence Transformer
 STR Model:            Siamese MLP
 Set:                  Test
 Spearman Correlation: 0.447
+
+Language:             Marathi
+Transformer Model:    all MiniLM Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Train
+Spearman Correlation: 0.452
+
+Language:             Marathi
+Transformer Model:    all MiniLM Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Test
+Spearman Correlation: 0.208
+
+Language:             Marathi
+Transformer Model:    paraphrase multilingual miniLM Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Train
+Spearman Correlation: 0.929
+
+Language:             Marathi
+Transformer Model:    paraphrase multilingual miniLM Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Test
+Spearman Correlation: 0.433
+
+Language:             Marathi
+Transformer Model:    mBERT Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Train
+Spearman Correlation: 0.813
+
+Language:             Marathi
+Transformer Model:    mBERT Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Test
+Spearman Correlation: 0.404
+
+Language:             Marathi
+Transformer Model:    XLMR Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Train
+Spearman Correlation: 0.815
+
+Language:             Marathi
+Transformer Model:    XLMR Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Test
+Spearman Correlation: 0.348
+
+Language:             Marathi
+Language:             Marathi
+Transformer Model:    LaBSE Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Train
+Spearman Correlation: 0.968
+
+Language:             Marathi
+Transformer Model:    LaBSE Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Test
+Spearman Correlation: 0.505
+
+Language:             Spanish
+Transformer Model:    BETO Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Train
+Spearman Correlation: 0.983
+WARNING: Some datasets were missing and were replaced with existing datasets
+
+Language:             Spanish
+Transformer Model:    BETO Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Test
+Spearman Correlation: 0.567
+WARNING: Some datasets were missing and were replaced with existing datasets
+
+Language:             Spanish
+Transformer Model:    all MiniLM Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Test
+Spearman Correlation: 0.476
+WARNING: Some datasets were missing and were replaced with existing datasets

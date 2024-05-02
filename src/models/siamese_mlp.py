@@ -51,6 +51,7 @@ class SiameseMLP(RelatednessModelBase):
 
     def train(self, epochs: int = 1, batch_size: int = 32, patience: int = 20):
         best_val_correlation = -1
+        best_val_loss = float('inf')
         no_improvement_count = 0
         best_model_state = None
 
@@ -74,14 +75,14 @@ class SiameseMLP(RelatednessModelBase):
 
             epoch_loss = running_loss / len(self.data.sentence_pairs['Train'])
 
-            input1 = torch.tensor(self.data.sentence_embeddings['Dev'][0])
-            input2 = torch.tensor(self.data.sentence_embeddings['Dev'][1])
-            true_scores_val = torch.tensor(self.data.scores['Dev'])
-            true_scores_val = true_scores_val.unsqueeze(1)
             with torch.no_grad():
+                input1 = torch.tensor(self.data.sentence_embeddings['Dev'][0])
+                input2 = torch.tensor(self.data.sentence_embeddings['Dev'][1])
+                true_scores_val = torch.tensor(self.data.scores['Dev'])
+                true_scores_val = true_scores_val.unsqueeze(1)
                 predicted_scores_val = self.model(input1, input2)
                 val_loss = self.loss_function(predicted_scores_val, true_scores_val)
-                val_correlation = self.data.calculate_spearman_correlation(self.data.scores['Dev'], predicted_scores_val)
+                val_correlation = self.data.calculate_spearman_correlation(true_scores_val, predicted_scores_val)
 
             if val_correlation > best_val_correlation:
                 best_val_correlation = val_correlation
@@ -89,6 +90,13 @@ class SiameseMLP(RelatednessModelBase):
                 best_model_state = self.model.state_dict()
             else:
                 no_improvement_count += 1
+
+            # if val_loss < best_val_loss:
+            #     best_val_loss = val_loss
+            #     no_improvement_count = 0
+            #     best_model_state = self.model.state_dict()
+            # else:
+            #     no_improvement_count += 1
 
             if self.verbose == Verbose.DEFAULT or self.verbose == Verbose.EXPRESSIVE:
                 print(f'Epoch {epoch + 1}/{epochs}, Loss: {epoch_loss:.4f}, Val Loss: {val_loss:.4f}')
@@ -109,11 +117,13 @@ class SiameseMLP(RelatednessModelBase):
         input2 = torch.tensor(self.data.sentence_embeddings[dataset][1])
         with torch.no_grad():
             predicted_scores = self.model(input1, input2)
+            true_scores = torch.tensor(self.data.scores[dataset])
+            true_scores = true_scores.unsqueeze(1)
 
         if self.verbose == Verbose.EXPRESSIVE:
             print(predicted_scores)
 
-        self.data.set_spearman_correlation(self.data.scores[dataset], predicted_scores)
+        self.data.set_spearman_correlation(true_scores, predicted_scores)
         self.data.print_results(self.name, self.data.sentence_transformer_name, dataset)
 
 
@@ -124,8 +134,8 @@ def evaluate_siamese_mlp(language: str) -> None:
 
 
 def main() -> None:
-    siamese_mlp = SiameseMLP(language=parse_program_args(), transformer_name='LaBSE')
-    siamese_mlp.train(epochs=100, patience=100)
+    siamese_mlp = SiameseMLP(language=parse_program_args(), transformer_name='all MiniLM')
+    siamese_mlp.train(epochs=100, patience=20)
     siamese_mlp.evaluate(dataset='Train')
     siamese_mlp.evaluate()
 
