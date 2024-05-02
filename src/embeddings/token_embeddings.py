@@ -8,7 +8,7 @@ from src.utilities.constants import TOKEN_TRANSFORMERS as TT
 
 
 class DataManagerWithTokenEmbeddings(DataManager):
-    def __init__(self, language, token_transformer_model_name: str):
+    def __init__(self, language: str, token_transformer_model_name: str, save_data: bool):
         super().__init__(language)
         self.token_transformer_name = token_transformer_model_name
         self.tokenizer = AutoTokenizer.from_pretrained(TT[token_transformer_model_name])
@@ -30,7 +30,10 @@ class DataManagerWithTokenEmbeddings(DataManager):
         print()
         self.embedding_dim = len(self.token_embeddings['Train'][0][0][0])
 
-        self._save(token_transformer_model_name)
+        if save_data is True:
+            self.tokenizer = None
+            self.token_transformer = None
+            self._save(token_transformer_model_name)
 
     def __create_token_embeddings(self, sentence_pairs: list[list[str]], batch_size: int = 3) -> tuple:
         pair_of_sentences = DataManager.sentence_pairs_to_pair_of_sentences(sentence_pairs)
@@ -120,9 +123,9 @@ class DataManagerWithTokenEmbeddings(DataManager):
             pkl.dump(self, file)
 
     @staticmethod
-    def load(language: str, token_transformer_model: str = 'base uncased BERT'):
+    def load(language: str, token_transformer_model: str = 'base uncased BERT', save_data: bool = True):
         path = 'data/token_embeddings/' + token_transformer_model + '_' + language + '.pkl'
         if os.path.exists(path):
             with open(path, 'rb') as file:
                 return pkl.load(file)
-        return DataManagerWithTokenEmbeddings(language, token_transformer_model)
+        return DataManagerWithTokenEmbeddings(language, token_transformer_model, save_data)

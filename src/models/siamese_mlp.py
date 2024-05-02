@@ -124,8 +124,8 @@ def evaluate_siamese_mlp(language: str) -> None:
 
 
 def main() -> None:
-    siamese_mlp = SiameseMLP(language=parse_program_args(), transformer_name='paraphrase multilingual miniLM')
-    siamese_mlp.train(epochs=100)
+    siamese_mlp = SiameseMLP(language=parse_program_args(), transformer_name='LaBSE')
+    siamese_mlp.train(epochs=100, patience=100)
     siamese_mlp.evaluate(dataset='Train')
     siamese_mlp.evaluate()
 

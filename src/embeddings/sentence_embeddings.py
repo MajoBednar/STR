@@ -16,7 +16,7 @@ def concat_embeddings(embeddings1, embeddings2):
 
 
 class DataManagerWithSentenceEmbeddings(DataManager):
-    def __init__(self, language, sentence_transformer_model_name: str):
+    def __init__(self, language: str, sentence_transformer_model_name: str, save_data: bool):
         super().__init__(language)
         self.sentence_transformer_name = sentence_transformer_model_name + ' Sentence Transformer'
         self.sentence_transformer = SentenceTransformer(ST[sentence_transformer_model_name])
@@ -29,7 +29,9 @@ class DataManagerWithSentenceEmbeddings(DataManager):
         self.__sentence_embeddings_train_dev()
         self.embedding_dim = len(self.sentence_embeddings['Train'][0][0])
 
-        self._save(sentence_transformer_model_name)
+        if save_data is True:
+            self.sentence_transformer = None
+            self._save(sentence_transformer_model_name)
 
     def __create_sentence_embeddings(self, sentence_pairs: list[list[str]]) -> tuple:
         pair_of_sentences = DataManager.sentence_pairs_to_pair_of_sentences(sentence_pairs)
@@ -52,9 +54,9 @@ class DataManagerWithSentenceEmbeddings(DataManager):
             pkl.dump(self, file)
 
     @staticmethod
-    def load(language: str, sentence_transformer_model: str):
+    def load(language: str, sentence_transformer_model: str, save_data: bool = True):
         path = 'data/sentence_embeddings/' + sentence_transformer_model + '_' + language + '.pkl'
         if os.path.exists(path):
             with open(path, 'rb') as file:
                 return pkl.load(file)
-        return DataManagerWithSentenceEmbeddings(language, sentence_transformer_model)
+        return DataManagerWithSentenceEmbeddings(language, sentence_transformer_model, save_data)

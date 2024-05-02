@@ -1,4 +1,10 @@
-ENGLISH
+LANGUAGE | STR MODEL | TRANSFORMER TYPE | TRANSFORMER MODEL | CORRELATION
+eng         MLP         Sentence            all MiniLM              0.506
+eng         MLP         Sentence          para multi miniLM         0.562
+eng         MLP         Sentence            mBERT                   0.350
+eng         MLP         Sentence            XLMR                    0.293
+eng         MLP         Sentence            LaBSE                   0.447
+
 
 Language:             English
 Transformer Model:    all MiniLM Sentence Transformer
@@ -24,3 +30,38 @@ STR Model:            Siamese MLP
 Set:                  Test
 Spearman Correlation: 0.562
 
+Language:             English
+Transformer Model:    mBERT Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Train
+Spearman Correlation: 0.494
+
+Language:             English
+Transformer Model:    mBERT Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Test
+Spearman Correlation: 0.350
+
+Language:             English
+Transformer Model:    XLMR Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Train
+Spearman Correlation: 0.526
+
+Language:             English
+Transformer Model:    XLMR Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Test
+Spearman Correlation: 0.293
+
+Language:             English
+Transformer Model:    LaBSE Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Train
+Spearman Correlation: 0.936
+
+Language:             English
+Transformer Model:    LaBSE Sentence Transformer
+STR Model:            Siamese MLP
+Set:                  Test
+Spearman Correlation: 0.447
