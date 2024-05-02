@@ -35,7 +35,7 @@ class DataManagerWithTokenEmbeddings(DataManager):
             self.token_transformer = None
             self._save(token_transformer_model_name)
 
-    def __create_token_embeddings(self, sentence_pairs: list[list[str]], batch_size: int = 3) -> tuple:
+    def __create_token_embeddings(self, sentence_pairs: list[list[str]], batch_size: int = 32) -> tuple:
         pair_of_sentences = DataManager.sentence_pairs_to_pair_of_sentences(sentence_pairs)
         all_embeddings1 = []
         all_embeddings2 = []
@@ -78,6 +78,7 @@ class DataManagerWithTokenEmbeddings(DataManager):
             if i == 0:
                 print('Number of batch sentences:', len(token_embeddings1))
                 print(token_embeddings1.shape)
+            print(i)
 
         max_tokens1 = max(embeddings.shape[1] for embeddings in all_embeddings1)
         max_tokens2 = max(embeddings.shape[1] for embeddings in all_embeddings2)
@@ -123,7 +124,7 @@ class DataManagerWithTokenEmbeddings(DataManager):
             pkl.dump(self, file)
 
     @staticmethod
-    def load(language: str, token_transformer_model: str = 'base uncased BERT', save_data: bool = True):
+    def load(language: str, token_transformer_model: str, save_data: bool = True):
         path = 'data/token_embeddings/' + token_transformer_model + '_' + language + '.pkl'
         if os.path.exists(path):
             with open(path, 'rb') as file:

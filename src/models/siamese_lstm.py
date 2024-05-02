@@ -6,6 +6,7 @@ from torch.optim import Adam
 from src.utilities.program_args import parse_program_args
 from src.utilities.constants import Verbose
 from src.embeddings.token_embeddings import DataManagerWithTokenEmbeddings
+from .relatedness_model_base import RelatednessModelBase
 
 
 class SiameseLSTMArchitecture(nn.Module):
@@ -26,8 +27,9 @@ class SiameseLSTMArchitecture(nn.Module):
 
     def forward(self, x1, x2):
         max_len = max(x1.size(1), x2.size(1))
-        x1_padded = functional.pad(x1, (0, 0, max_len - x1.size(1), 0), value=float('nan'))
-        x2_padded = functional.pad(x2, (0, 0, max_len - x2.size(1), 0), value=float('nan'))
+        # print('max tokens', max_len)
+        x1_padded = functional.pad(x1, (0, 0, max_len - x1.size(1), 0))
+        x2_padded = functional.pad(x2, (0, 0, max_len - x2.size(1), 0))
 
         out1 = self.forward_one(x1_padded)
         out2 = self.forward_one(x2_padded)
@@ -37,11 +39,12 @@ class SiameseLSTMArchitecture(nn.Module):
         return relatedness_score
 
 
-class SiameseLSTM:
-    def __init__(self, language: str, learning_rate: float = 0.001, verbose: Verbose = Verbose.DEFAULT):
+class SiameseLSTM(RelatednessModelBase):
+    def __init__(self, language: str, transformer_name: str = 'base uncased BERT', learning_rate: float = 0.001,
+                 verbose: Verbose = Verbose.DEFAULT):
+        super().__init__(verbose)
         self.name = 'Siamese LSTM (using Token Embeddings)'
-        self.data = DataManagerWithTokenEmbeddings.load(language)
-        self.verbose: Verbose = verbose
+        self.data = DataManagerWithTokenEmbeddings.load(language, transformer_name)
 
         self.model = SiameseLSTMArchitecture(self.data.embedding_dim, self.data.embedding_dim * 2)
         self.loss_function = nn.MSELoss()
@@ -57,7 +60,7 @@ class SiameseLSTM:
                 true_scores = torch.tensor(self.data.scores['Train'][batch:batch + batch_size])
 
                 outputs = self.model(inputs1, inputs2)
-                print(outputs)
+                # print(outputs)
                 true_scores = true_scores.unsqueeze(1)
                 loss = self.loss_function(outputs, true_scores)
 
@@ -68,8 +71,8 @@ class SiameseLSTM:
 
             epoch_loss = running_loss / len(self.data.sentence_pairs['Train'])
 
-            input1 = torch.tensor(self.data.token_embeddings['Test'][0])
-            input2 = torch.tensor(self.data.token_embeddings['Test'][1])
+            input1 = self.data.token_embeddings['Test'][0]
+            input2 = self.data.token_embeddings['Test'][1]
             true_scores_test = torch.tensor(self.data.scores['Test'])
             true_scores_test = true_scores_test.unsqueeze(1)
             with torch.no_grad():
@@ -81,8 +84,8 @@ class SiameseLSTM:
                 self.evaluate()
 
     def evaluate(self, dataset: str = 'Test'):
-        input1 = torch.tensor(self.data.token_embeddings[dataset][0])
-        input2 = torch.tensor(self.data.token_embeddings[dataset][1])
+        input1 = self.data.token_embeddings[dataset][0]
+        input2 = self.data.token_embeddings[dataset][1]
         with torch.no_grad():
             predicted_scores = self.model(input1, input2)
 
@@ -99,12 +102,23 @@ def evaluate_siamese_lstm(language: str) -> None:
 
 
 def main() -> None:
-    siamese_lstm = SiameseLSTM(language=parse_program_args())
-    print('Embedding dim:', siamese_lstm.data.embedding_dim)
-    print('Number of tokens:', siamese_lstm.data.number_of_tokens)
-    # siamese_lstm.train(epochs=10)
-    # siamese_lstm.evaluate(dataset='Train')
-    # siamese_lstm.evaluate()
+    siamese_lstm = SiameseLSTM(parse_program_args(), 'LaBSE')
+    # print('Embedding dim:', siamese_lstm.data.embedding_dim)
+    # print('Number of tokens in Train set 1st sentence from each pair:',
+    #       len(siamese_lstm.data.token_embeddings['Train'][0][0]))
+    # print('Number of tokens in Train set 2nd sentence from each pair:',
+    #       len(siamese_lstm.data.token_embeddings['Train'][1][0]))
+    # print('Number of tokens in Dev set 1st sentence from each pair:',
+    #       len(siamese_lstm.data.token_embeddings['Dev'][0][0]))
+    # print('Number of tokens in Dev set 2nd sentence from each pair:',
+    #       len(siamese_lstm.data.token_embeddings['Dev'][1][0]))
+    # print('Number of tokens in Test set 1st sentence from each pair:',
+    #       len(siamese_lstm.data.token_embeddings['Test'][0][0]))
+    # print('Number of tokens in Test set 2nd sentence from each pair:',
+    #       len(siamese_lstm.data.token_embeddings['Test'][1][0]))
+    siamese_lstm.train(epochs=2)
+    siamese_lstm.evaluate(dataset='Train')
+    siamese_lstm.evaluate()
 
 
 if __name__ == '__main__':
