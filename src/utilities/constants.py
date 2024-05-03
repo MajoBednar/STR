@@ -1,6 +1,6 @@
 from enum import Enum
 
-LANGUAGES = ['afr', 'eng', 'esp', 'hin', 'mar', 'pan']
+LANGUAGES = ['afr', 'eng', 'esp', 'hin', 'mar', 'pan', 'all']
 
 FULL_LANGUAGE_NAME = {
     'afr': 'Afrikaans',
@@ -8,30 +8,31 @@ FULL_LANGUAGE_NAME = {
     'esp': 'Spanish',
     'hin': 'Hindi',
     'mar': 'Marathi',
-    'pan': 'Punjabi'
+    'pan': 'Punjabi',
+    'all': 'All Languages'
 }
 
 SENTENCE_SEPARATOR = '\n'
 
 SENTENCE_TRANSFORMERS = {
-    'all MiniLM': 'all-MiniLM-L6-v2',
-    'paraphrase multilingual miniLM': 'paraphrase-multilingual-MiniLM-L12-v2',
-    'mBERT': 'google-bert/bert-base-multilingual-cased',
-    'XLMR': 'FacebookAI/xlm-roberta-base',
-    'LaBSE': 'sentence-transformers/LaBSE',
-    'ALBETO': 'dccuchile/albert-base-spanish',
-    'BETO': 'dccuchile/bert-base-spanish-wwm-cased',
-    'RoBERTa-BNE': 'PlanTL-GOB-ES/roberta-base-bne'
+    'all MiniLM': 'all-MiniLM-L6-v2',                                           # eng
+    'paraphrase multilingual miniLM': 'paraphrase-multilingual-MiniLM-L12-v2',  # all
+    'mBERT': 'google-bert/bert-base-multilingual-cased',                        # all
+    'XLMR': 'FacebookAI/xlm-roberta-base',                                      # all
+    'LaBSE': 'sentence-transformers/LaBSE',                                     # all
+    'ALBETO': 'dccuchile/albert-base-spanish',                                  # esp
+    'BETO': 'dccuchile/bert-base-spanish-wwm-cased',                            # esp
+    'RoBERTa-BNE': 'PlanTL-GOB-ES/roberta-base-bne'                             # esp
 }
 
 TOKEN_TRANSFORMERS = {
-    'base uncased BERT': 'bert-base-uncased',
-    'mBERT': 'google-bert/bert-base-multilingual-cased',
-    'XLMR': 'FacebookAI/xlm-roberta-base',
-    'LaBSE': 'sentence-transformers/LaBSE',
-    'ALBETO': 'dccuchile/albert-base-spanish',
-    'BETO': 'dccuchile/bert-base-spanish-wwm-cased',
-    'RoBERTa-BNE': 'PlanTL-GOB-ES/roberta-base-bne'
+    'base uncased BERT': 'bert-base-uncased',                                   # eng
+    'mBERT': 'google-bert/bert-base-multilingual-cased',                        # all
+    'XLMR': 'FacebookAI/xlm-roberta-base',                                      # all
+    'LaBSE': 'sentence-transformers/LaBSE',                                     # all
+    'ALBETO': 'dccuchile/albert-base-spanish',                                  # esp
+    'BETO': 'dccuchile/bert-base-spanish-wwm-cased',                            # esp
+    'RoBERTa-BNE': 'PlanTL-GOB-ES/roberta-base-bne'                             # esp
 }
 
 

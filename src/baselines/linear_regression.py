@@ -6,13 +6,13 @@ from src.embeddings.sentence_embeddings import sum_embeddings, concat_embeddings
 
 
 class STRLinearRegression:
-    def __init__(self, language: str, pooling_function, verbose: Verbose = Verbose.DEFAULT):
+    def __init__(self, language: str, data_split: str, pooling_function, verbose: Verbose = Verbose.DEFAULT):
         self.name = 'Linear Regression by '
         self.name += 'Summing' if pooling_function == sum_embeddings else 'Concatenating'
         self.name += ' Sentence Embeddings'
         self.verbose: Verbose = verbose
 
-        self.data = DataManagerWithSentenceEmbeddings.load(language, 'all MiniLM')
+        self.data = DataManagerWithSentenceEmbeddings.load(language, data_split, 'all MiniLM')
         self.regressor = LinearRegression()
         self.pooling_function = pooling_function
 
@@ -35,22 +35,25 @@ class STRLinearRegression:
         self.data.print_results(self.name, dataset)
 
 
-def evaluate_linear_regression(language: str) -> None:
-    lr_sum = STRLinearRegression(language=language, pooling_function=sum_embeddings, verbose=Verbose.SILENT)
+def evaluate_linear_regression(language: str, data_split: str) -> None:
+    lr_sum = STRLinearRegression(language=language, data_split=data_split, pooling_function=sum_embeddings,
+                                 verbose=Verbose.SILENT)
     lr_sum.train(dataset='Train')
     lr_sum.evaluate()
 
-    lr_concat = STRLinearRegression(language=language, pooling_function=concat_embeddings, verbose=Verbose.SILENT)
+    lr_concat = STRLinearRegression(language=language, data_split=data_split, pooling_function=concat_embeddings,
+                                    verbose=Verbose.SILENT)
     lr_concat.train(dataset='Train')
     lr_concat.evaluate()
 
 
 def main() -> None:
-    lr_sum = STRLinearRegression(language=parse_program_args(), pooling_function=sum_embeddings)
+    language, data_split = parse_program_args()
+    lr_sum = STRLinearRegression(language=language, data_split=data_split, pooling_function=sum_embeddings)
     lr_sum.train()
     lr_sum.evaluate()
 
-    lr_concat = STRLinearRegression(language=parse_program_args(), pooling_function=concat_embeddings)
+    lr_concat = STRLinearRegression(language=language, data_split=data_split, pooling_function=concat_embeddings)
     lr_concat.train()
     lr_concat.evaluate()
 

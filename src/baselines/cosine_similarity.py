@@ -4,9 +4,9 @@ from src.utilities.program_args import parse_program_args
 
 
 class STRCosineSimilarity:
-    def __init__(self, language: str):
+    def __init__(self, language: str, data_split: str):
         self.name = 'Cosine Similarity'
-        self.data = DataManagerWithSentenceEmbeddings.load(language)
+        self.data = DataManagerWithSentenceEmbeddings.load(language, data_split)
 
     def evaluate(self, dataset: str = 'Test') -> None:
         similarity_scores = compute_cosine_similarities(self.data.sentence_embeddings[dataset][0],
@@ -16,13 +16,14 @@ class STRCosineSimilarity:
         self.data.print_results(self.name, dataset)
 
 
-def evaluate_cosine_similarity(language: str) -> None:
-    cosine_similarity = STRCosineSimilarity(language=language)
+def evaluate_cosine_similarity(language: str, data_split: str) -> None:
+    cosine_similarity = STRCosineSimilarity(language=language, data_split=data_split)
     cosine_similarity.evaluate('Test')
 
 
 def main() -> None:
-    cosine_similarity = STRCosineSimilarity(language=parse_program_args())
+    language, data_split = parse_program_args()
+    cosine_similarity = STRCosineSimilarity(language=language, data_split=data_split)
     cosine_similarity.evaluate('Train')
     cosine_similarity.evaluate('Dev')
     cosine_similarity.evaluate()

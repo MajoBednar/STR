@@ -6,8 +6,9 @@ from .constants import SENTENCE_SEPARATOR as SEP, FULL_LANGUAGE_NAME as FULL
 
 
 class DataManager:
-    def __init__(self, language):
+    def __init__(self, language: str, data_split: str):
         self.language: str = language
+        self.data_split: str = data_split
         self.warning = False
 
         data = self.__initialize_data()
@@ -35,6 +36,7 @@ class DataManager:
         print(f'Language:             {FULL[self.language]}')
         print(f'Transformer Model:    {transformer_model}')
         print(f'STR Model:            {relatedness_model}')
+        print(f'Data Split:           {self.data_split.capitalize()}')
         print(f'Set:                  {dataset}')
         print(f'Spearman Correlation: {self.spearman_correlation:.3f}')
         if self.warning:
@@ -53,7 +55,7 @@ class DataManager:
         return scores_train, scores_dev, scores_test, sentence_pairs_train, sentence_pairs_dev, sentence_pairs_test
 
     def __load_data(self, dataset: str) -> tuple[list[float], list[list[str]]]:
-        path = 'data/datasets_original_splits/' + self.language + '/'
+        path = 'data/datasets_' + self.data_split + '_splits/' + self.language + '/'
         file = self.language + dataset + '.csv'
         if not os.path.exists(path + file):
             file = self.__replace_missing_dataset(dataset=dataset)

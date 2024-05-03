@@ -39,11 +39,11 @@ class SiameseMLPArchitecture(nn.Module):
 
 
 class SiameseMLP(RelatednessModelBase):
-    def __init__(self, language: str, transformer_name: str = 'all MiniLM', learning_rate: float = 0.001,
+    def __init__(self, language: str, data_split: str, transformer_name: str = 'all MiniLM', learning_rate: float = 0.001,
                  verbose: Verbose = Verbose.DEFAULT):
         super().__init__(verbose)
         self.name = 'Siamese MLP'
-        self.data = DataManagerWithSentenceEmbeddings.load(language, transformer_name)
+        self.data = DataManagerWithSentenceEmbeddings.load(language, data_split, transformer_name)
 
         self.model = SiameseMLPArchitecture(self.data.embedding_dim)
         self.loss_function = nn.MSELoss()
@@ -127,14 +127,15 @@ class SiameseMLP(RelatednessModelBase):
         self.data.print_results(self.name, self.data.sentence_transformer_name, dataset)
 
 
-def evaluate_siamese_mlp(language: str) -> None:
-    siamese_mlp = SiameseMLP(language=language, verbose=Verbose.SILENT)
+def evaluate_siamese_mlp(language: str, data_split: str) -> None:
+    siamese_mlp = SiameseMLP(language=language, data_split=data_split, verbose=Verbose.SILENT)
     siamese_mlp.train(epochs=10)
     siamese_mlp.evaluate()
 
 
 def main() -> None:
-    siamese_mlp = SiameseMLP(language=parse_program_args(), transformer_name='all MiniLM')
+    language, data_split = parse_program_args()
+    siamese_mlp = SiameseMLP(language, data_split, transformer_name='all MiniLM')
     siamese_mlp.train(epochs=100, patience=20)
     siamese_mlp.evaluate(dataset='Train')
     siamese_mlp.evaluate()

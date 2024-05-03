@@ -5,9 +5,9 @@ from src.utilities.program_args import parse_program_args
 
 
 class STRLexicalOverlap:
-    def __init__(self, language: str):
+    def __init__(self, language: str, data_split: str):
         self.name = 'Lexical Overlap'
-        self.data = DataManager(language)
+        self.data = DataManager(language, data_split)
 
     @staticmethod
     def calculate_dice_coefficient(sentence1: str, sentence2: str) -> float:
@@ -28,13 +28,14 @@ class STRLexicalOverlap:
         self.data.print_results(self.name, dataset)
 
 
-def evaluate_lexical_overlap(language: str) -> None:
-    lexical_overlap = STRLexicalOverlap(language=language)
+def evaluate_lexical_overlap(language: str, data_split: str) -> None:
+    lexical_overlap = STRLexicalOverlap(language=language, data_split=data_split)
     lexical_overlap.evaluate('Test')
 
 
 def main() -> None:
-    lexical_overlap = STRLexicalOverlap(language=parse_program_args())
+    language, data_split = parse_program_args()
+    lexical_overlap = STRLexicalOverlap(language=language, data_split=data_split)
     lexical_overlap.evaluate('Train')
     lexical_overlap.evaluate('Dev')
     lexical_overlap.evaluate('Test')

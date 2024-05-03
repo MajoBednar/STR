@@ -40,11 +40,11 @@ class SiameseLSTMArchitecture(nn.Module):
 
 
 class SiameseLSTM(RelatednessModelBase):
-    def __init__(self, language: str, transformer_name: str = 'base uncased BERT', learning_rate: float = 0.001,
+    def __init__(self, language: str, data_split: str, transformer_name: str = 'base uncased BERT', learning_rate: float = 0.001,
                  verbose: Verbose = Verbose.DEFAULT):
         super().__init__(verbose)
         self.name = 'Siamese LSTM (using Token Embeddings)'
-        self.data = DataManagerWithTokenEmbeddings.load(language, transformer_name)
+        self.data = DataManagerWithTokenEmbeddings.load(language, data_split, transformer_name)
 
         self.model = SiameseLSTMArchitecture(self.data.embedding_dim, self.data.embedding_dim * 2)
         self.loss_function = nn.MSELoss()
@@ -95,14 +95,15 @@ class SiameseLSTM(RelatednessModelBase):
         self.data.print_results(self.name, self.data.token_transformer_name, dataset)
 
 
-def evaluate_siamese_lstm(language: str) -> None:
-    siamese_lstm = SiameseLSTM(language=language, verbose=Verbose.SILENT)
+def evaluate_siamese_lstm(language: str, data_split: str) -> None:
+    siamese_lstm = SiameseLSTM(language=language, data_split=data_split, verbose=Verbose.SILENT)
     # siamese_lstm.train(epochs=10)
     # siamese_lstm.evaluate()
 
 
 def main() -> None:
-    siamese_lstm = SiameseLSTM(parse_program_args(), 'mBERT')
+    language, data_split = parse_program_args()
+    siamese_lstm = SiameseLSTM(language, data_split, 'mBERT')
     # print('Embedding dim:', siamese_lstm.data.embedding_dim)
     # print('Number of tokens in Train set 1st sentence from each pair:',
     #       len(siamese_lstm.data.token_embeddings['Train'][0][0]))

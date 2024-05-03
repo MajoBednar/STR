@@ -16,8 +16,8 @@ def concat_embeddings(embeddings1, embeddings2):
 
 
 class DataManagerWithSentenceEmbeddings(DataManager):
-    def __init__(self, language: str, sentence_transformer_model_name: str, save_data: bool):
-        super().__init__(language)
+    def __init__(self, language: str, data_split: str, sentence_transformer_model_name: str, save_data: bool):
+        super().__init__(language, data_split)
         self.sentence_transformer_name = sentence_transformer_model_name + ' Sentence Transformer'
         self.sentence_transformer = SentenceTransformer(ST[sentence_transformer_model_name])
 
@@ -48,9 +48,9 @@ class DataManagerWithSentenceEmbeddings(DataManager):
             pkl.dump(self, file)
 
     @staticmethod
-    def load(language: str, sentence_transformer_model: str, save_data: bool = True):
+    def load(language: str, data_split: str, sentence_transformer_model: str, save_data: bool = True):
         path = 'data/sentence_embeddings/' + sentence_transformer_model + '_' + language + '.pkl'
         if os.path.exists(path):
             with open(path, 'rb') as file:
                 return pkl.load(file)
-        return DataManagerWithSentenceEmbeddings(language, sentence_transformer_model, save_data)
+        return DataManagerWithSentenceEmbeddings(language, data_split, sentence_transformer_model, save_data)
