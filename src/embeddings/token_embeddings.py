@@ -113,13 +113,13 @@ class DataManagerWithTokenEmbeddings(DataManager):
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-        path = directory + token_transformer_model + '_' + self.language + '.pkl'
+        path = directory + token_transformer_model + '_' + self.language + '_' + self.data_split + '.pkl'
         with open(path, 'wb') as file:
             pkl.dump(self, file)
 
     @staticmethod
     def load(language: str, data_split: str, token_transformer_model: str, save_data: bool = True):
-        path = 'data/token_embeddings/' + token_transformer_model + '_' + language + '.pkl'
+        path = 'data/token_embeddings/' + token_transformer_model + '_' + language + '_' + data_split + '.pkl'
         if os.path.exists(path):
             with open(path, 'rb') as file:
                 return pkl.load(file)

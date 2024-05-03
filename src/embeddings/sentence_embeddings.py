@@ -43,13 +43,13 @@ class DataManagerWithSentenceEmbeddings(DataManager):
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-        path = directory + sentence_transformer_model + '_' + self.language + '.pkl'
+        path = directory + sentence_transformer_model + '_' + self.language + '_' + self.data_split + '.pkl'
         with open(path, 'wb') as file:
             pkl.dump(self, file)
 
     @staticmethod
     def load(language: str, data_split: str, sentence_transformer_model: str, save_data: bool = True):
-        path = 'data/sentence_embeddings/' + sentence_transformer_model + '_' + language + '.pkl'
+        path = 'data/sentence_embeddings/' + sentence_transformer_model + '_' + language + '_' + data_split + '.pkl'
         if os.path.exists(path):
             with open(path, 'rb') as file:
                 return pkl.load(file)
