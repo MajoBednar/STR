@@ -1,6 +1,5 @@
 import pandas as pd
 import os
-import numpy as np
 from scipy.stats import spearmanr
 
 from .constants import SENTENCE_SEPARATOR as SEP, FULL_LANGUAGE_NAME as FULL
@@ -16,7 +15,6 @@ class DataManager:
             'Train': data[0],
             'Dev': data[1],
             'Test': data[2],
-            'Train+Dev': data[0] + data[1]
         }
         self.sentence_pairs: dict[str, list[list[str]]] = {
             'Train': data[3],
@@ -48,16 +46,10 @@ class DataManager:
         list_1, list_2 = zip(*sentence_pairs)
         return list(list_1), list(list_2)
 
-    @staticmethod
-    def _embeddings_train_dev(train_embeddings, dev_embeddings) -> tuple:
-        train_dev1 = np.concatenate((train_embeddings[0], dev_embeddings[0]), axis=0)
-        train_dev2 = np.concatenate((train_embeddings[1], dev_embeddings[1]), axis=0)
-        return train_dev1, train_dev2
-
     def __initialize_data(self) -> tuple:
         scores_train, sentence_pairs_train = self.__load_data(dataset='_train')
-        scores_dev, sentence_pairs_dev = self.__load_data(dataset='_dev_with_labels')
-        scores_test, sentence_pairs_test = self.__load_data(dataset='_test_with_labels')
+        scores_dev, sentence_pairs_dev = self.__load_data(dataset='_dev')
+        scores_test, sentence_pairs_test = self.__load_data(dataset='_test')
         return scores_train, scores_dev, scores_test, sentence_pairs_train, sentence_pairs_dev, sentence_pairs_test
 
     def __load_data(self, dataset: str) -> tuple[list[float], list[list[str]]]:
@@ -79,7 +71,7 @@ class DataManager:
 
     @staticmethod
     def __load_sentence_pairs(df: pd.DataFrame) -> list[list[str]]:
-        sentences = df["Text"].tolist()
+        sentences = df['Text'].tolist()
         sentence_pairs = []
         for sentence in sentences:
             sentence_1, sentence_2 = sentence.split(SEP)
@@ -89,8 +81,8 @@ class DataManager:
     def __replace_missing_dataset(self, dataset: str) -> str:
         new_dataset = 'REPLACEMENT FAILED'
         match dataset:
-            case '_train' | '_test_with_labels':
-                new_dataset = '_dev_with_labels'
+            case '_train' | '_test':
+                new_dataset = '_dev'
         self.__print_missing_dataset_warning(dataset, new_dataset)
         return self.language + new_dataset + '.csv'
 

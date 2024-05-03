@@ -12,11 +12,11 @@ class STRLinearRegression:
         self.name += ' Sentence Embeddings'
         self.verbose: Verbose = verbose
 
-        self.data = DataManagerWithSentenceEmbeddings.load(language)
+        self.data = DataManagerWithSentenceEmbeddings.load(language, 'all MiniLM')
         self.regressor = LinearRegression()
         self.pooling_function = pooling_function
 
-    def train(self, dataset: str = 'Train+Dev') -> None:
+    def train(self, dataset: str = 'Train') -> None:
         embeddings1, embeddings2 = self.data.sentence_embeddings[dataset]
         pooled_embeddings = self.pooling_function(embeddings1, embeddings2)
         self.regressor.fit(pooled_embeddings, self.data.scores[dataset])

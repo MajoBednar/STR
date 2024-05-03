@@ -26,7 +26,6 @@ class DataManagerWithSentenceEmbeddings(DataManager):
             'Dev': self.__create_sentence_embeddings(self.sentence_pairs['Dev']),
             'Test': self.__create_sentence_embeddings(self.sentence_pairs['Test'])
         }
-        self.__sentence_embeddings_train_dev()
         self.embedding_dim = len(self.sentence_embeddings['Train'][0][0])
 
         if save_data is True:
@@ -38,11 +37,6 @@ class DataManagerWithSentenceEmbeddings(DataManager):
         sentence_embeddings1 = self.sentence_transformer.encode(pair_of_sentences[0])
         sentence_embeddings2 = self.sentence_transformer.encode(pair_of_sentences[1])
         return sentence_embeddings1, sentence_embeddings2
-
-    def __sentence_embeddings_train_dev(self) -> None:
-        train_dev_embeddings = DataManager._embeddings_train_dev(self.sentence_embeddings['Train'],
-                                                                 self.sentence_embeddings['Dev'])
-        self.sentence_embeddings['Train+Dev'] = train_dev_embeddings
 
     def _save(self, sentence_transformer_model: str):
         directory = 'data/sentence_embeddings/'

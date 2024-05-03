@@ -3,6 +3,11 @@ import glob
 import os
 from sklearn.utils import shuffle
 
+"""This script is used to combine the original data splits into one dataset.
+It can be done for each language, but also the option 'all' to combine all languages.
+The data are also shuffled to ensure randomness."""
+
+# choose the language: afr/eng/esp/hin/mar/pan/all
 language = input('Language: ')
 
 if language != 'all':

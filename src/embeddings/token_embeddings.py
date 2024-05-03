@@ -19,7 +19,6 @@ class DataManagerWithTokenEmbeddings(DataManager):
             'Dev': self.__create_token_embeddings(self.sentence_pairs['Dev']),
             'Test': self.__create_token_embeddings(self.sentence_pairs['Test'])
         }
-        # self.__token_embeddings_train_dev()
 
         self.number_of_tokens = len(self.token_embeddings['Train'][0][0])  # number of tokens in each sentence
         print('Number of tokens:', self.number_of_tokens)
@@ -108,11 +107,6 @@ class DataManagerWithTokenEmbeddings(DataManager):
         # token_embeddings2 = outputs2.last_hidden_state
         # print(token_embeddings1)
         # return token_embeddings1, token_embeddings2
-
-    def __token_embeddings_train_dev(self) -> None:
-        train_dev_embeddings = DataManager._embeddings_train_dev(self.token_embeddings['Train'],
-                                                                 self.token_embeddings['Dev'])
-        self.token_embeddings['Train+Dev'] = train_dev_embeddings
 
     def _save(self, token_transformer_model: str):
         directory = 'data/token_embeddings/'
