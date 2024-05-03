@@ -1,5 +1,6 @@
 import pandas as pd
-import numpy as np
+
+"""This script is used to generate train/dev/test splits based on the combined (and shuffled) data."""
 
 # choose the language: afr/eng/esp/hin/mar/pan/all
 language = input('Language: ')
@@ -24,6 +25,6 @@ dev_data = combined_df.iloc[num_train:num_train + num_dev]
 test_data = combined_df.iloc[num_train + num_dev:]
 
 # Save each split into separate files
-train_data.to_csv(directory + language + 'train.csv', index=False)
-dev_data.to_csv(directory + language + 'dev.csv', index=False)
-test_data.to_csv(directory + language + 'test.csv', index=False)
+train_data.to_csv(directory + language + '_train.csv', index=False)
+dev_data.to_csv(directory + language + '_dev.csv', index=False)
+test_data.to_csv(directory + language + '_test.csv', index=False)
