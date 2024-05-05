@@ -39,8 +39,8 @@ class SiameseMLPArchitecture(nn.Module):
 
 
 class SiameseMLP(RelatednessModelBase):
-    def __init__(self, language: str, data_split: str, transformer_name: str = 'all MiniLM', learning_rate: float = 0.001,
-                 verbose: Verbose = Verbose.DEFAULT):
+    def __init__(self, language: str, data_split: str, transformer_name: str = 'all MiniLM',
+                 learning_rate: float = 0.001, verbose: Verbose = Verbose.DEFAULT):
         super().__init__(verbose)
         self.name = 'Siamese MLP'
         self.data = DataManagerWithSentenceEmbeddings.load(language, data_split, transformer_name)
@@ -84,19 +84,19 @@ class SiameseMLP(RelatednessModelBase):
                 val_loss = self.loss_function(predicted_scores_val, true_scores_val)
                 val_correlation = self.data.calculate_spearman_correlation(true_scores_val, predicted_scores_val)
 
-            if val_correlation > best_val_correlation:
-                best_val_correlation = val_correlation
-                no_improvement_count = 0
-                best_model_state = self.model.state_dict()
-            else:
-                no_improvement_count += 1
-
-            # if val_loss < best_val_loss:
-            #     best_val_loss = val_loss
+            # if val_correlation > best_val_correlation:
+            #     best_val_correlation = val_correlation
             #     no_improvement_count = 0
             #     best_model_state = self.model.state_dict()
             # else:
             #     no_improvement_count += 1
+
+            if val_loss < best_val_loss:
+                best_val_loss = val_loss
+                no_improvement_count = 0
+                best_model_state = self.model.state_dict()
+            else:
+                no_improvement_count += 1
 
             if self.verbose == Verbose.DEFAULT or self.verbose == Verbose.EXPRESSIVE:
                 print(f'Epoch {epoch + 1}/{epochs}, Loss: {epoch_loss:.4f}, Val Loss: {val_loss:.4f}')
@@ -127,9 +127,10 @@ class SiameseMLP(RelatednessModelBase):
         self.data.print_results(self.name, self.data.sentence_transformer_name, dataset)
 
 
-def evaluate_siamese_mlp(language: str, data_split: str) -> None:
-    siamese_mlp = SiameseMLP(language=language, data_split=data_split, verbose=Verbose.SILENT)
-    siamese_mlp.train(epochs=10)
+def evaluate_siamese_mlp(language: str, data_split: str, transformer_name: str) -> None:
+    siamese_mlp = SiameseMLP(language=language, data_split=data_split, verbose=Verbose.SILENT,
+                             transformer_name=transformer_name)
+    siamese_mlp.train(epochs=100)
     siamese_mlp.evaluate()
 
 
