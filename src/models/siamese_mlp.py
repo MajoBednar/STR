@@ -140,7 +140,7 @@ def evaluate_siamese_mlp(language: str, data_split: str, transformer_name: str) 
 def main() -> None:
     language, data_split = parse_program_args()
     siamese_mlp = SiameseMLP(language, data_split, transformer_name='LaBSE')
-    siamese_mlp.train(epochs=5, patience=20)
+    siamese_mlp.train(epochs=1, patience=20)
     siamese_mlp.evaluate(dataset='Train')
     siamese_mlp.evaluate()
 

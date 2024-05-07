@@ -1,18 +1,9 @@
-import numpy as np
 from sentence_transformers import SentenceTransformer
 import pickle as pkl
 import os
 
 from src.utilities.data_management import DataManager
 from src.utilities.constants import SENTENCE_TRANSFORMERS as ST
-
-
-def sum_embeddings(embeddings1, embeddings2):
-    return embeddings1 + embeddings2
-
-
-def concat_embeddings(embeddings1, embeddings2):
-    return np.concatenate((embeddings1, embeddings2), axis=1)
 
 
 class DataManagerWithSentenceEmbeddings(DataManager):
@@ -35,6 +26,7 @@ class DataManagerWithSentenceEmbeddings(DataManager):
     def __create_sentence_embeddings(self, sentence_pairs: list[list[str]]) -> tuple:
         pair_of_sentences = DataManager.sentence_pairs_to_pair_of_sentences(sentence_pairs)
         sentence_embeddings1 = self.sentence_transformer.encode(pair_of_sentences[0])
+        print(type(sentence_embeddings1))
         sentence_embeddings2 = self.sentence_transformer.encode(pair_of_sentences[1])
         return sentence_embeddings1, sentence_embeddings2
 

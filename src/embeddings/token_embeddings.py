@@ -39,8 +39,8 @@ class DataManagerWithTokenEmbeddings(DataManager):
         all_embeddings1 = []
         all_embeddings2 = []
 
-        tokenized_sentences1 = self.tokenizer(pair_of_sentences[0], return_tensors="pt", padding=True, truncation=True)
-        tokenized_sentences2 = self.tokenizer(pair_of_sentences[1], return_tensors="pt", padding=True, truncation=True)
+        tokenized_sentences1 = self.tokenizer(pair_of_sentences[0], return_tensors='pt', padding=True, truncation=True)
+        tokenized_sentences2 = self.tokenizer(pair_of_sentences[1], return_tensors='pt', padding=True, truncation=True)
 
         for i in range(0, len(pair_of_sentences[0]), batch_size):
             batch_inputs1 = {
