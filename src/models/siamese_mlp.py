@@ -14,14 +14,14 @@ class SiameseMLPArchitecture(nn.Module):
         super(SiameseMLPArchitecture, self).__init__()
 
         self.shared_branch = nn.Sequential(
-            nn.Linear(input_dim, 512),
+            nn.Linear(input_dim, 1024),
+            nn.ReLU(),
+            nn.Linear(1024, 512),
             nn.ReLU(),
             nn.Linear(512, 256),
             nn.ReLU(),
             nn.Linear(256, 128),
             nn.ReLU()
-            # nn.Linear(512, 128),
-            # nn.ReLU()
         )
 
         self.common_branch = nn.Sequential(
@@ -127,7 +127,7 @@ def evaluate_siamese_mlp(language: str, data_split: str, transformer_name: str) 
 def main() -> None:
     language, data_split = parse_program_args()
     siamese_mlp = SiameseMLP(language, data_split, transformer_name='LaBSE')
-    siamese_mlp.train(epochs=50, early_stopping=Eso.CORR, patience=20)
+    siamese_mlp.train(epochs=150, early_stopping=Eso.CORR, patience=20)
     siamese_mlp.evaluate(dataset='Train')
     siamese_mlp.evaluate()
 

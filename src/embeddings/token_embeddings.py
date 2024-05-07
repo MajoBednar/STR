@@ -19,14 +19,6 @@ class DataManagerWithTokenEmbeddings(DataManager):
             'Dev': self.__create_token_embeddings(self.sentence_pairs['Dev']),
             'Test': self.__create_token_embeddings(self.sentence_pairs['Test'])
         }
-
-        self.number_of_tokens = len(self.token_embeddings['Train'][0][0])  # number of tokens in each sentence
-        print('Number of tokens:', self.number_of_tokens)
-        self.number_of_tokens = len(self.token_embeddings['Dev'][0][0])  # number of tokens in each sentence
-        print('Number of tokens:', self.number_of_tokens)
-        self.number_of_tokens = len(self.token_embeddings['Test'][0][0])  # number of tokens in each sentence
-        print('Number of tokens:', self.number_of_tokens)
-        print()
         self.embedding_dim = len(self.token_embeddings['Train'][0][0][0])
 
         if save_data is True:
@@ -69,7 +61,6 @@ class DataManagerWithTokenEmbeddings(DataManager):
         max_tokens1 = max(embeddings.shape[1] for embeddings in all_embeddings1)
         max_tokens2 = max(embeddings.shape[1] for embeddings in all_embeddings2)
         print('Max tokens', max_tokens1, max_tokens2)
-        print(all_embeddings1[0].shape)
 
         print(all_embeddings1[0].shape)
         concatenated_embeddings1 = torch.cat(all_embeddings1, dim=0)
