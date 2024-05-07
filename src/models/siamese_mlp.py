@@ -63,8 +63,8 @@ class SiameseMLP(RelatednessModelBase):
             epoch_loss = running_loss / len(self.data.sentence_pairs['Train'])
 
             with torch.no_grad():
-                input1 = torch.tensor(self.data.sentence_embeddings['Dev'][0])
-                input2 = torch.tensor(self.data.sentence_embeddings['Dev'][1])
+                input1 = self.data.sentence_embeddings['Dev'][0]
+                input2 = self.data.sentence_embeddings['Dev'][1]
                 predicted_scores_val = self.model(input1, input2)
                 true_scores_val = torch.tensor(self.data.scores['Dev'])
                 true_scores_val = true_scores_val.unsqueeze(1)
@@ -102,8 +102,8 @@ class SiameseMLP(RelatednessModelBase):
     def train_batch(self, batch: int, batch_size: int, running_loss: float) -> float:
         self.optimizer.zero_grad()
 
-        inputs1 = torch.tensor(self.data.sentence_embeddings['Train'][0][batch:batch + batch_size])
-        inputs2 = torch.tensor(self.data.sentence_embeddings['Train'][1][batch:batch + batch_size])
+        inputs1 = self.data.sentence_embeddings['Train'][0][batch:batch + batch_size]
+        inputs2 = self.data.sentence_embeddings['Train'][1][batch:batch + batch_size]
         true_scores = torch.tensor(self.data.scores['Train'][batch:batch + batch_size])
         true_scores = true_scores.unsqueeze(1)
 
@@ -117,8 +117,8 @@ class SiameseMLP(RelatednessModelBase):
 
     def evaluate(self, dataset: str = 'Test'):
         with torch.no_grad():
-            input1 = torch.tensor(self.data.sentence_embeddings[dataset][0])
-            input2 = torch.tensor(self.data.sentence_embeddings[dataset][1])
+            input1 = self.data.sentence_embeddings[dataset][0]
+            input2 = self.data.sentence_embeddings[dataset][1]
             predicted_scores = self.model(input1, input2)
             true_scores = torch.tensor(self.data.scores[dataset])
             true_scores = true_scores.unsqueeze(1)
