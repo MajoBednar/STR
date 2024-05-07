@@ -10,7 +10,7 @@ from src.utilities.constants import SENTENCE_TRANSFORMERS as ST
 class DataManagerWithSentenceEmbeddings(DataManager):
     def __init__(self, language: str, data_split: str, sentence_transformer_model_name: str, save_data: bool):
         super().__init__(language, data_split)
-        self.sentence_transformer_name = sentence_transformer_model_name + ' Sentence Transformer'
+        self.transformer_name = sentence_transformer_model_name + ' Sentence Transformer'
         self.sentence_transformer = SentenceTransformer(ST[sentence_transformer_model_name])
 
         self.sentence_embeddings = {
@@ -23,6 +23,9 @@ class DataManagerWithSentenceEmbeddings(DataManager):
         if save_data is True:
             self.sentence_transformer = None
             self._save(sentence_transformer_model_name)
+
+    def get_embeddings(self):
+        return self.sentence_embeddings
 
     def __create_sentence_embeddings(self, sentence_pairs: list[list[str]]) -> tuple:
         pair_of_sentences = DataManager.sentence_pairs_to_pair_of_sentences(sentence_pairs)

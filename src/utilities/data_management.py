@@ -33,7 +33,8 @@ class DataManager:
         spearman_correlation, _ = spearmanr(true_scores, predicted_scores)
         return spearman_correlation
 
-    def print_results(self, relatedness_model: str, transformer_model: str, dataset: str = 'Test') -> None:
+    def print_results(self, relatedness_model: str, transformer_model: str = 'No Transformer',
+                      dataset: str = 'Test') -> None:
         print(f'Language:             {FULL[self.language]}')
         print(f'Transformer Model:    {transformer_model}')
         print(f'STR Model:            {relatedness_model}')

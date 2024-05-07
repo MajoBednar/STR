@@ -10,7 +10,7 @@ from src.utilities.constants import TOKEN_TRANSFORMERS as TT
 class DataManagerWithTokenEmbeddings(DataManager):
     def __init__(self, language: str, data_split: str, token_transformer_model_name: str, save_data: bool):
         super().__init__(language, data_split)
-        self.token_transformer_name = token_transformer_model_name
+        self.transformer_name = token_transformer_model_name + ' Token Transformer'
         self.tokenizer = AutoTokenizer.from_pretrained(TT[token_transformer_model_name])
         self.token_transformer = AutoModel.from_pretrained(TT[token_transformer_model_name])
 
@@ -25,6 +25,9 @@ class DataManagerWithTokenEmbeddings(DataManager):
             self.tokenizer = None
             self.token_transformer = None
             self._save(token_transformer_model_name)
+
+    def get_embeddings(self):
+        return self.token_embeddings
 
     def __create_token_embeddings(self, sentence_pairs: list[list[str]], batch_size: int = 32) -> tuple:
         pair_of_sentences = DataManager.sentence_pairs_to_pair_of_sentences(sentence_pairs)

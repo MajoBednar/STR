@@ -25,7 +25,7 @@ class STRLexicalOverlap:
             lexical_overlap_scores.append(self.calculate_dice_coefficient(pair[0], pair[1]))
 
         self.data.set_spearman_correlation(self.data.scores[dataset], lexical_overlap_scores)
-        self.data.print_results(self.name, dataset)
+        self.data.print_results(relatedness_model=self.name, dataset=dataset)
 
 
 def evaluate_lexical_overlap(language: str, data_split: str) -> None:
