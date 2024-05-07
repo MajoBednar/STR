@@ -38,14 +38,8 @@ class DataManagerWithSentenceEmbeddings(DataManager):
         sentence_embeddings2 = self.sentence_transformer.encode(pair_of_sentences[1])
         return sentence_embeddings1, sentence_embeddings2
 
-    def _save(self, sentence_transformer_model: str):
-        directory = 'data/sentence_embeddings/'
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-
-        path = directory + sentence_transformer_model + '_' + self.language + '_' + self.data_split + '.pkl'
-        with open(path, 'wb') as file:
-            pkl.dump(self, file)
+    def _save(self, sentence_transformer_model: str, directory: str = 'data/sentence_embeddings/'):
+        super()._save(sentence_transformer_model, directory)
 
     @staticmethod
     def load(language: str, data_split: str, sentence_transformer_model: str, save_data: bool = True):

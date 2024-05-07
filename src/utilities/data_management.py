@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import pickle as pkl
 from scipy.stats import spearmanr
 
 from .constants import SENTENCE_SEPARATOR as SEP, FULL_LANGUAGE_NAME as FULL
@@ -47,6 +48,14 @@ class DataManager:
     def sentence_pairs_to_pair_of_sentences(sentence_pairs: list[list[str]]) -> tuple[list[str], list[str]]:
         list_1, list_2 = zip(*sentence_pairs)
         return list(list_1), list(list_2)
+
+    def _save(self, token_transformer_model: str, directory: str):
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        path = directory + token_transformer_model + '_' + self.language + '_' + self.data_split + '.pkl'
+        with open(path, 'wb') as file:
+            pkl.dump(self, file)
 
     def __initialize_data(self) -> tuple:
         scores_train, sentence_pairs_train = self.__load_data(dataset='_train')

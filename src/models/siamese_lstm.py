@@ -40,8 +40,8 @@ class SiameseLSTMArchitecture(nn.Module):
 
 
 class SiameseLSTM(RelatednessModelBase):
-    def __init__(self, language: str, data_split: str, transformer_name: str = 'base uncased BERT', learning_rate: float = 0.001,
-                 verbose: Verbose = Verbose.DEFAULT):
+    def __init__(self, language: str, data_split: str, transformer_name: str = 'base uncased BERT',
+                 learning_rate: float = 0.001, verbose: Verbose = Verbose.DEFAULT):
         super().__init__(verbose)
         self.name = 'Siamese LSTM (using Token Embeddings)'
         self.data = DataManagerWithTokenEmbeddings.load(language, data_split, transformer_name)
