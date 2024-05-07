@@ -58,19 +58,8 @@ class SiameseMLP(RelatednessModelBase):
             for batch in range(0, len(self.data.sentence_pairs['Train']), batch_size):
                 running_loss = self.train_batch(batch, batch_size, running_loss)
 
-            epoch_loss = running_loss / len(self.data.sentence_pairs['Train'])
-
-            with torch.no_grad():
-                predicted_scores_val = self.predict('Dev')
-                true_scores_val = torch.tensor(self.data.scores['Dev']).unsqueeze(1)
-                val_loss = self.loss_function(predicted_scores_val, true_scores_val)
-                val_correlation = self.data.calculate_spearman_correlation(true_scores_val, predicted_scores_val)
-
-            if self.verbose == Verbose.DEFAULT or self.verbose == Verbose.EXPRESSIVE:
-                print(f'Epoch {epoch + 1}/{epochs}, Loss: {epoch_loss:.4f}, Val Loss: {val_loss:.4f}', end='')
-                print(f', Val Correlation: {val_correlation:.4f}')
-            if self.verbose == Verbose.EXPRESSIVE:
-                self.evaluate()
+            _, _, val_loss, val_correlation = self.validate('Dev')
+            self.__summarize_epoch(epoch, epochs, running_loss, val_loss, val_correlation)
 
             early_stopping_data.update(val_corr=val_correlation, val_loss=val_loss, model=self.model)
             if early_stopping_data.stop(self.verbose):
@@ -79,6 +68,14 @@ class SiameseMLP(RelatednessModelBase):
         # Restore the best model state
         if early_stopping_data.best_model_state is not None:
             self.model.load_state_dict(early_stopping_data.best_model_state)
+
+    def __summarize_epoch(self, epoch: int, epochs: int, running_loss: float, val_loss: float, val_corr: float):
+        epoch_loss = running_loss / len(self.data.sentence_pairs['Train'])
+        if self.verbose == Verbose.DEFAULT or self.verbose == Verbose.EXPRESSIVE:
+            print(f'Epoch {epoch + 1}/{epochs}, Loss: {epoch_loss:.4f}, Val Loss: {val_loss:.4f}', end='')
+            print(f', Val Correlation: {val_corr:.4f}')
+        if self.verbose == Verbose.EXPRESSIVE:
+            self.evaluate()
 
     def train_batch(self, batch: int, batch_size: int, running_loss: float) -> float:
         self.optimizer.zero_grad()
@@ -102,10 +99,16 @@ class SiameseMLP(RelatednessModelBase):
             input2 = self.data.sentence_embeddings[dataset][1][batch:batch + batch_size]
         return self.model(input1, input2)
 
-    def evaluate(self, dataset: str = 'Test'):
+    def validate(self, dataset: str) -> tuple:
         with torch.no_grad():
             predicted_scores = self.predict(dataset)
-            true_scores = self.data.scores[dataset]
+            true_scores = torch.tensor(self.data.scores[dataset]).unsqueeze(1)
+            loss = self.loss_function(predicted_scores, true_scores)
+            correlation = self.data.calculate_spearman_correlation(true_scores, predicted_scores)
+        return predicted_scores, true_scores, loss, correlation
+
+    def evaluate(self, dataset: str = 'Test'):
+        predicted_scores, true_scores, _, _ = self.validate(dataset)
 
         if self.verbose == Verbose.EXPRESSIVE:
             print(predicted_scores)
