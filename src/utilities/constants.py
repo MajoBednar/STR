@@ -37,6 +37,12 @@ TOKEN_TRANSFORMERS = {
 
 
 class Verbose(Enum):
-    SILENT = 0
-    DEFAULT = 1
-    EXPRESSIVE = 2
+    SILENT = 0      # no printing
+    DEFAULT = 1     # informative printing
+    EXPRESSIVE = 2  # detailed printing
+
+
+class EarlyStoppingOptions(Enum):
+    NONE = 0  # no early stopping
+    LOSS = 1  # validation loss
+    CORR = 2  # correlation
