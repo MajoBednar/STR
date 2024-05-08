@@ -50,11 +50,11 @@ class DataManager:
         list_1, list_2 = zip(*sentence_pairs)
         return list(list_1), list(list_2)
 
-    def _save(self, token_transformer_model: str, directory: str):
+    def _save(self, transformer_model: str, directory: str):
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-        path = directory + token_transformer_model + '_' + self.language + '_' + self.data_split + '.pkl'
+        path = directory + transformer_model + '_' + self.language + '_' + self.data_split + '.pkl'
         with open(path, 'wb') as file:
             pkl.dump(self, file)
 

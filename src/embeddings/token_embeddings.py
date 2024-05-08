@@ -71,8 +71,8 @@ class DataManagerWithTokenEmbeddings(DataManager):
         concatenated_embeddings2 = torch.cat(all_embeddings2, dim=0)
         return concatenated_embeddings1, concatenated_embeddings2
 
-    def _save(self, token_transformer_model: str, directory: str = 'data/token_embeddings/'):
-        super()._save(token_transformer_model, directory)
+    def _save(self, transformer_model: str, directory: str = 'data/token_embeddings/'):
+        super()._save(transformer_model, directory)
 
     @staticmethod
     def load(language: str, data_split: str, token_transformer_model: str, save_data: bool = True):

@@ -33,8 +33,8 @@ class DataManagerWithSentenceEmbeddings(DataManager):
         sentence_embeddings2 = torch.tensor(self.sentence_transformer.encode(pair_of_sentences[1]))
         return sentence_embeddings1, sentence_embeddings2
 
-    def _save(self, sentence_transformer_model: str, directory: str = 'data/sentence_embeddings/'):
-        super()._save(sentence_transformer_model, directory)
+    def _save(self, transformer_model: str, directory: str = 'data/sentence_embeddings/'):
+        super()._save(transformer_model, directory)
 
     @staticmethod
     def load(language: str, data_split: str, sentence_transformer_model: str, save_data: bool = True):
