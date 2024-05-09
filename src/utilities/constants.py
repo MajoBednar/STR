@@ -31,7 +31,8 @@ TOKEN_TRANSFORMERS = {
     'LaBSE': 'sentence-transformers/LaBSE',                                     # all
     'ALBETO': 'dccuchile/albert-base-spanish',                                  # esp
     'BETO': 'dccuchile/bert-base-spanish-wwm-cased',                            # esp
-    'RoBERTa-BNE': 'PlanTL-GOB-ES/roberta-base-bne'                             # esp
+    'RoBERTa-BNE': 'PlanTL-GOB-ES/roberta-base-bne',                            # esp
+    'RoBERTa': 'FacebookAI/roberta-base'                                        # eng
 }
 
 

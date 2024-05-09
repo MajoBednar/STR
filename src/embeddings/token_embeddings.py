@@ -31,8 +31,7 @@ class DataManagerWithTokenEmbeddings(DataManager):
 
     def __create_token_embeddings(self, sentence_pairs: list[list[str]], batch_size: int = 32) -> tuple:
         pair_of_sentences = DataManager.sentence_pairs_to_pair_of_sentences(sentence_pairs)
-        all_embeddings1 = []
-        all_embeddings2 = []
+        all_embeddings1, all_embeddings2 = [], []
 
         tokenized_sentences1 = self.tokenizer(pair_of_sentences[0], return_tensors='pt', padding=True, truncation=True)
         tokenized_sentences2 = self.tokenizer(pair_of_sentences[1], return_tensors='pt', padding=True, truncation=True)
@@ -56,18 +55,9 @@ class DataManagerWithTokenEmbeddings(DataManager):
 
             all_embeddings1.append(token_embeddings1)
             all_embeddings2.append(token_embeddings2)
-            if i == 0:
-                print('Number of batch sentences:', len(token_embeddings1))
-                print(token_embeddings1.shape)
             print(i)
 
-        max_tokens1 = max(embeddings.shape[1] for embeddings in all_embeddings1)
-        max_tokens2 = max(embeddings.shape[1] for embeddings in all_embeddings2)
-        print('Max tokens', max_tokens1, max_tokens2)
-
-        print(all_embeddings1[0].shape)
         concatenated_embeddings1 = torch.cat(all_embeddings1, dim=0)
-        print(concatenated_embeddings1.shape)
         concatenated_embeddings2 = torch.cat(all_embeddings2, dim=0)
         return concatenated_embeddings1, concatenated_embeddings2
 
