@@ -39,11 +39,15 @@ class SiameseLSTMArchitecture(nn.Module):
 
 
 class SiameseLSTM(RelatednessModelBase):
-    def __init__(self, language: str, data_split: str, transformer_name: str = 'base uncased BERT',
-                 learning_rate: float = 0.001, verbose: Verbose = Verbose.DEFAULT):
+    def __init__(self, language: str, data_split: str, transformer_name: str = 'mBERT',
+                 learning_rate: float = 0.001, verbose: Verbose = Verbose.DEFAULT,
+                 data_manager: DataManagerWithTokenEmbeddings = None):
         super().__init__(verbose)
         self.name = 'Siamese LSTM'
-        self.data = DataManagerWithTokenEmbeddings.load(language, data_split, transformer_name)
+        if data_manager is None:
+            self.data = DataManagerWithTokenEmbeddings.load(language, data_split, transformer_name)
+        else:
+            self.data = data_manager
 
         self.model = SiameseLSTMArchitecture(self.data.embedding_dim, self.data.embedding_dim * 2)
         self.optimizer = Adam(self.model.parameters(), lr=learning_rate)
@@ -72,7 +76,7 @@ def main() -> None:
     #       len(siamese_lstm.data.token_embeddings['Test'][0][0]))
     # print('Number of tokens in Test set 2nd sentence from each pair:',
     #       len(siamese_lstm.data.token_embeddings['Test'][1][0]))
-    siamese_lstm.train(epochs=2, early_stopping=Eso.CORR)
+    siamese_lstm.train(epochs=50, early_stopping=Eso.LOSS)
     siamese_lstm.evaluate(dataset='Train')
     siamese_lstm.evaluate()
 

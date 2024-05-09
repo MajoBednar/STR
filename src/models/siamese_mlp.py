@@ -40,10 +40,14 @@ class SiameseMLPArchitecture(nn.Module):
 
 class SiameseMLP(RelatednessModelBase):
     def __init__(self, language: str, data_split: str, transformer_name: str = 'all MiniLM',
-                 learning_rate: float = 0.001, verbose: Verbose = Verbose.DEFAULT):
+                 learning_rate: float = 0.001, verbose: Verbose = Verbose.DEFAULT,
+                 data_manager: DataManagerWithSentenceEmbeddings = None):
         super().__init__(verbose)
         self.name = 'Siamese MLP'
-        self.data = DataManagerWithSentenceEmbeddings.load(language, data_split, transformer_name)
+        if data_manager is None:
+            self.data = DataManagerWithSentenceEmbeddings.load(language, data_split, transformer_name)
+        else:
+            self.data = data_manager
 
         self.model = SiameseMLPArchitecture(self.data.embedding_dim)
         self.optimizer = Adam(self.model.parameters(), lr=learning_rate)

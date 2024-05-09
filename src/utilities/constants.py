@@ -26,7 +26,6 @@ SENTENCE_TRANSFORMERS = {
 }
 
 TOKEN_TRANSFORMERS = {
-    'base uncased BERT': 'bert-base-uncased',                                   # eng
     'mBERT': 'google-bert/bert-base-multilingual-cased',                        # all
     'XLMR': 'FacebookAI/xlm-roberta-base',                                      # all
     'LaBSE': 'sentence-transformers/LaBSE',                                     # all
