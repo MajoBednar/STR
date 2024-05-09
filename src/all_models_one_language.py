@@ -1,7 +1,7 @@
 from src.utilities.program_args import parse_program_args
-from src.baselines import lexical_overlap as lo, cosine_similarity as cs
-from src.models import siamese_mlp as mlp
-from src.models import siamese_lstm as lstm
+from src.baselines import str_lexical_overlap as lo, str_cosine_similarity as cs
+from src.models import str_siamese_mlp as mlp
+from src.models import str_siamese_lstm as lstm
 
 
 if __name__ == '__main__':

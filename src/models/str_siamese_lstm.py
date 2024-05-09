@@ -6,12 +6,12 @@ from torch.optim import Adam
 from src.utilities.program_args import parse_program_args
 from src.utilities.constants import Verbose, EarlyStoppingOptions as Eso
 from src.embeddings.token_embeddings import DataManagerWithTokenEmbeddings
-from .relatedness_model_base import RelatednessModelBase
+from .str_model_base import STRModelBase
 
 
-class SiameseLSTMArchitecture(nn.Module):
+class SiameseLSTM(nn.Module):
     def __init__(self, embedding_dim, hidden_dim, num_layers=1):
-        super(SiameseLSTMArchitecture, self).__init__()
+        super(SiameseLSTM, self).__init__()
         self.embedding_dim = embedding_dim
         self.hidden_dim = hidden_dim
         self.num_layers = num_layers
@@ -38,7 +38,7 @@ class SiameseLSTMArchitecture(nn.Module):
         return relatedness_score
 
 
-class SiameseLSTM(RelatednessModelBase):
+class STRSiameseLSTM(STRModelBase):
     def __init__(self, language: str, data_split: str, transformer_name: str = 'mBERT',
                  learning_rate: float = 0.001, verbose: Verbose = Verbose.DEFAULT,
                  data_manager: DataManagerWithTokenEmbeddings = None):
@@ -49,20 +49,20 @@ class SiameseLSTM(RelatednessModelBase):
         else:
             self.data = data_manager
 
-        self.model = SiameseLSTMArchitecture(self.data.embedding_dim, self.data.embedding_dim * 2)
+        self.model = SiameseLSTM(self.data.embedding_dim, self.data.embedding_dim * 2)
         self.optimizer = Adam(self.model.parameters(), lr=learning_rate)
 
 
 def evaluate_siamese_lstm(language: str, data_split: str, transformer_name: str) -> None:
-    siamese_lstm = SiameseLSTM(language=language, data_split=data_split, verbose=Verbose.SILENT,
-                               transformer_name=transformer_name)
+    siamese_lstm = STRSiameseLSTM(language=language, data_split=data_split, verbose=Verbose.SILENT,
+                                  transformer_name=transformer_name)
     siamese_lstm.train(epochs=10)
     siamese_lstm.evaluate()
 
 
 def main() -> None:
     language, data_split = parse_program_args()
-    siamese_lstm = SiameseLSTM(language, data_split, 'LaBSE')
+    siamese_lstm = STRSiameseLSTM(language, data_split, 'LaBSE')
     # print('Embedding dim:', siamese_lstm.data.embedding_dim)
     # print('Number of tokens in Train set 1st sentence from each pair:',
     #       len(siamese_lstm.data.token_embeddings['Train'][0][0]))

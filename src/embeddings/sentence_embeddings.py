@@ -1,7 +1,6 @@
 from sentence_transformers import SentenceTransformer
 import pickle as pkl
 import os
-import torch
 
 from src.utilities.data_management import DataManager
 from src.utilities.constants import SENTENCE_TRANSFORMERS as ST
@@ -29,8 +28,8 @@ class DataManagerWithSentenceEmbeddings(DataManager):
 
     def __create_sentence_embeddings(self, sentence_pairs: list[list[str]]) -> tuple:
         pair_of_sentences = DataManager.sentence_pairs_to_pair_of_sentences(sentence_pairs)
-        sentence_embeddings1 = torch.tensor(self.sentence_transformer.encode(pair_of_sentences[0]))
-        sentence_embeddings2 = torch.tensor(self.sentence_transformer.encode(pair_of_sentences[1]))
+        sentence_embeddings1 = self.sentence_transformer.encode(pair_of_sentences[0], convert_to_tensor=True)
+        sentence_embeddings2 = self.sentence_transformer.encode(pair_of_sentences[1], convert_to_tensor=True)
         return sentence_embeddings1, sentence_embeddings2
 
     def _save(self, transformer_model: str, directory: str = 'data/sentence_embeddings/'):

@@ -5,13 +5,13 @@ from src.utilities.constants import Verbose, EarlyStoppingOptions as Eso
 from src.utilities.early_stopping import EarlyStoppingData
 
 
-class RelatednessModelBase:
+class STRModelBase:
     def __init__(self, verbose: Verbose = Verbose.DEFAULT):
         self.verbose = verbose
-        self.name = 'Relatedness Model Base'
+        self.name = 'Semantic Text Relatedness Model Base'
         self.data = AbstractDataManager()
 
-        self.model = AbstractRelatednessArchitecture()
+        self.model = AbstractModelArchitecture()
         self.loss_function = nn.MSELoss()
         self.optimizer = AbstractOptimizer()
 
@@ -82,7 +82,7 @@ class RelatednessModelBase:
         self.data.print_results(self.name, self.data.transformer_name, dataset)
 
 
-class AbstractRelatednessArchitecture(nn.Module):
+class AbstractModelArchitecture(nn.Module):
     pass
 
 

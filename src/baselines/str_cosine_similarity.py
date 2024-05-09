@@ -39,7 +39,7 @@ def evaluate_cosine_similarity(language: str, data_split: str, transformer_name:
 
 def main() -> None:
     language, data_split = parse_program_args()
-    cosine_similarity = STRCosineSimilarity(language=language, data_split=data_split, transformer_name='all MiniLM')
+    cosine_similarity = STRCosineSimilarity(language=language, data_split=data_split, transformer_name='LaBSE')
     cosine_similarity.evaluate('Train')
     cosine_similarity.evaluate('Dev')
     cosine_similarity.evaluate()

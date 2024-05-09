@@ -5,12 +5,12 @@ from torch.optim import Adam
 from src.utilities.program_args import parse_program_args
 from src.utilities.constants import Verbose, EarlyStoppingOptions as Eso
 from src.embeddings.sentence_embeddings import DataManagerWithSentenceEmbeddings
-from .relatedness_model_base import RelatednessModelBase
+from .str_model_base import STRModelBase
 
 
-class SiameseMLPArchitecture(nn.Module):
+class SiameseMLP(nn.Module):
     def __init__(self, input_dim):
-        super(SiameseMLPArchitecture, self).__init__()
+        super(SiameseMLP, self).__init__()
 
         self.shared_branch = nn.Sequential(
             nn.Linear(input_dim, 1024),
@@ -38,7 +38,7 @@ class SiameseMLPArchitecture(nn.Module):
         return out
 
 
-class SiameseMLP(RelatednessModelBase):
+class STRSiameseMLP(STRModelBase):
     def __init__(self, language: str, data_split: str, transformer_name: str = 'all MiniLM',
                  learning_rate: float = 0.001, verbose: Verbose = Verbose.DEFAULT,
                  data_manager: DataManagerWithSentenceEmbeddings = None):
@@ -49,20 +49,20 @@ class SiameseMLP(RelatednessModelBase):
         else:
             self.data = data_manager
 
-        self.model = SiameseMLPArchitecture(self.data.embedding_dim)
+        self.model = SiameseMLP(self.data.embedding_dim)
         self.optimizer = Adam(self.model.parameters(), lr=learning_rate)
 
 
 def evaluate_siamese_mlp(language: str, data_split: str, transformer_name: str) -> None:
-    siamese_mlp = SiameseMLP(language=language, data_split=data_split, verbose=Verbose.SILENT,
-                             transformer_name=transformer_name)
+    siamese_mlp = STRSiameseMLP(language=language, data_split=data_split, verbose=Verbose.SILENT,
+                                transformer_name=transformer_name)
     siamese_mlp.train(epochs=100, early_stopping=Eso.CORR, patience=20)
     siamese_mlp.evaluate()
 
 
 def main() -> None:
     language, data_split = parse_program_args()
-    siamese_mlp = SiameseMLP(language, data_split, transformer_name='LaBSE')
+    siamese_mlp = STRSiameseMLP(language, data_split, transformer_name='LaBSE')
     siamese_mlp.train(epochs=150, early_stopping=Eso.CORR, patience=20)
     siamese_mlp.evaluate(dataset='Train')
     siamese_mlp.evaluate()
