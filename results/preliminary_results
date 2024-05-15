@@ -21,6 +21,7 @@ mar         MLP         Sentence          XLMR                      0.348
 mar         MLP         Sentence          LaBSE                     0.505
 
 pan         LSTM        Tokens            mBERT                     0.392
+pan         LSTM        Tokens            LaBSE                     0.583
 afr         LSTM        Tokens            mBERT                     0.579
 
 Language:             English

@@ -70,13 +70,14 @@ class STRModelBase:
             correlation = self.data.calculate_spearman_correlation(true_scores, predicted_scores)
         return predicted_scores, true_scores, loss, correlation
 
-    def evaluate(self, dataset: str = 'Test') -> None:
+    def evaluate(self, dataset: str = 'Test') -> float:
         predicted_scores, true_scores, _, _ = self.validate(dataset)
         if self.verbose == Verbose.EXPRESSIVE:
             print(predicted_scores)
 
         correlation = self.data.calculate_spearman_correlation(true_scores, predicted_scores)
         self.data.print_results(correlation, self.name, self.data.transformer_name, dataset)
+        return correlation
 
 
 class AbstractModelArchitecture(nn.Module):

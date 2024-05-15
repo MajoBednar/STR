@@ -26,7 +26,7 @@ def wmd(sentence1_emb: torch.Tensor, sentence2_emb: torch.Tensor) -> torch.Tenso
 
 
 def normalize_wmd(wmd_score: float, min_wmd: float, max_wmd: float) -> float:
-    # normalize WMD score to range [0, 1].
+    # normalize WMD score to range [0, 1]
     return (max_wmd - wmd_score) / (max_wmd - min_wmd)
 
 
@@ -35,7 +35,7 @@ class STRWordMoversDistance:
         self.name: str = 'Word Mover\'s Distance'
         self.data: DataManagerWithTokenEmbeddings = data_manager
 
-    def evaluate(self, dataset: str = 'Test') -> None:
+    def evaluate(self, dataset: str = 'Test') -> float:
         wmd_scores = []
         for i in range(len(self.data.scores[dataset])):
             wmd_score = wmd(self.data.token_embeddings[dataset][0][i], self.data.token_embeddings[dataset][1][i])
@@ -48,6 +48,7 @@ class STRWordMoversDistance:
 
         correlation = self.data.calculate_spearman_correlation(self.data.scores[dataset], normalized_scores)
         self.data.print_results(correlation, self.name, self.data.transformer_name, dataset)
+        return correlation
 
 
 def evaluate_word_movers_distance(data_manager: DataManagerWithTokenEmbeddings) -> None:

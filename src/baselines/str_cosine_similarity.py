@@ -24,11 +24,12 @@ class STRCosineSimilarity:
         self.name: str = 'Cosine Similarity'
         self.data: DataManagerWithSentenceEmbeddings = data_manager
 
-    def evaluate(self, dataset: str = 'Test') -> None:
+    def evaluate(self, dataset: str = 'Test') -> float:
         similarity_scores = compute_cosine_similarities(self.data.sentence_embeddings[dataset][0],
                                                         self.data.sentence_embeddings[dataset][1])
         correlation = self.data.calculate_spearman_correlation(self.data.scores[dataset], similarity_scores)
         self.data.print_results(correlation, self.name, self.data.transformer_name, dataset)
+        return correlation
 
 
 def evaluate_cosine_similarity(data_manager: DataManagerWithSentenceEmbeddings) -> None:
