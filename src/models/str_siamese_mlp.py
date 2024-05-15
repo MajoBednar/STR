@@ -12,57 +12,43 @@ class SiameseMLP(nn.Module):
     def __init__(self, input_dim):
         super(SiameseMLP, self).__init__()
 
-        self.shared_branch = nn.Sequential(
-            nn.Linear(input_dim, 1024),
-            nn.ReLU(),
-            nn.Linear(1024, 512),
-            nn.ReLU(),
-            nn.Linear(512, 256),
-            nn.ReLU(),
-            nn.Linear(256, 128),
-            nn.ReLU()
-        )
+        self.shared_branch = nn.Sequential(nn.Linear(input_dim, 1024), nn.ReLU(),
+                                           nn.Linear(1024, 512), nn.ReLU(),
+                                           nn.Linear(512, 256), nn.ReLU(),
+                                           nn.Linear(256, 128), nn.ReLU())
 
-        self.common_branch = nn.Sequential(
-            nn.Linear(128, 32),
-            nn.ReLU(),
-            nn.Linear(32, 1),
-        )
+        self.common_branch = nn.Sequential(nn.Linear(128, 32), nn.ReLU(),
+                                           nn.Linear(32, 1))
 
-    def forward(self, embedding_sentence1, embedding_sentence2):
-        out1 = self.shared_branch(embedding_sentence1)
-        out2 = self.shared_branch(embedding_sentence2)
+    def forward(self, embedding1: torch.Tensor, embedding2: torch.Tensor) -> torch.Tensor:
+        out1 = self.shared_branch(embedding1)
+        out2 = self.shared_branch(embedding2)
 
         combined = torch.abs(out1 - out2)
-        out = torch.sigmoid(self.common_branch(combined))
-        return out
+        return torch.sigmoid(self.common_branch(combined))
 
 
 class STRSiameseMLP(STRModelBase):
-    def __init__(self, language: str, data_split: str, transformer_name: str = 'all MiniLM',
-                 learning_rate: float = 0.001, verbose: Verbose = Verbose.DEFAULT,
-                 data_manager: DataManagerWithSentenceEmbeddings = None):
+    def __init__(self, data_manager: DataManagerWithSentenceEmbeddings, learning_rate: float = 0.001,
+                 verbose: Verbose = Verbose.DEFAULT):
         super().__init__(verbose)
-        self.name = 'Siamese MLP'
-        if data_manager is None:
-            self.data = DataManagerWithSentenceEmbeddings.load(language, data_split, transformer_name)
-        else:
-            self.data = data_manager
-
-        self.model = SiameseMLP(self.data.embedding_dim)
-        self.optimizer = Adam(self.model.parameters(), lr=learning_rate)
+        self.name: str = 'Siamese MLP'
+        self.data: DataManagerWithSentenceEmbeddings = data_manager
+        self.model: SiameseMLP = SiameseMLP(self.data.embedding_dim)
+        self.optimizer: Adam = Adam(self.model.parameters(), lr=learning_rate)
 
 
-def evaluate_siamese_mlp(language: str, data_split: str, transformer_name: str) -> None:
-    siamese_mlp = STRSiameseMLP(language=language, data_split=data_split, verbose=Verbose.SILENT,
-                                transformer_name=transformer_name)
+def evaluate_siamese_mlp(data_manager: DataManagerWithSentenceEmbeddings) -> None:
+    siamese_mlp = STRSiameseMLP(data_manager, verbose=Verbose.SILENT)
     siamese_mlp.train(epochs=100, early_stopping=Eso.CORR, patience=20)
     siamese_mlp.evaluate()
 
 
 def main() -> None:
     language, data_split = parse_program_args()
-    siamese_mlp = STRSiameseMLP(language, data_split, transformer_name='LaBSE')
+    data_manager = DataManagerWithSentenceEmbeddings.load(language, data_split, 'LaBSE')
+
+    siamese_mlp = STRSiameseMLP(data_manager)
     siamese_mlp.train(epochs=150, early_stopping=Eso.CORR, patience=20)
     siamese_mlp.evaluate(dataset='Train')
     siamese_mlp.evaluate()

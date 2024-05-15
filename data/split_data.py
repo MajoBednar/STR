@@ -4,9 +4,9 @@ import pandas as pd
 
 # choose the language: afr/eng/esp/hin/mar/pan/all
 language = input('Language: ')
-directory = 'datasets_custom_splits/' + language + '/'
 
 # Read the combined and shuffled data from the previously created file
+directory = 'datasets_custom_splits/' + language + '/'
 combined_df = pd.read_csv(directory + language + '_combined.csv')
 
 # Define proportions for train, development, and test sets

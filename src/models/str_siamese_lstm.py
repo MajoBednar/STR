@@ -16,66 +16,47 @@ class SiameseLSTM(nn.Module):
         self.hidden_dim = hidden_dim
         self.num_layers = num_layers
 
-        self.lstm = nn.LSTM(embedding_dim, hidden_dim, num_layers, batch_first=True)
+        self.shared_lstm = nn.LSTM(embedding_dim, hidden_dim, num_layers, batch_first=True)
+        self.common_branch = nn.Linear(hidden_dim, 1)
 
-        self.fc = nn.Linear(hidden_dim, 1)
-
-    def forward_one(self, x):
-        lstm_out, _ = self.lstm(x)
+    def forward_lstm(self, embedding: torch.Tensor) -> torch.Tensor:
+        lstm_out, _ = self.shared_lstm(embedding)
         pooled_out, _ = torch.max(lstm_out, dim=1)
         return pooled_out
 
-    def forward(self, x1, x2):
-        max_len = max(x1.size(1), x2.size(1))
-        x1_padded = functional.pad(x1, (0, 0, max_len - x1.size(1), 0))
-        x2_padded = functional.pad(x2, (0, 0, max_len - x2.size(1), 0))
-
-        out1 = self.forward_one(x1_padded)
-        out2 = self.forward_one(x2_padded)
-
+    def forward(self, embedding1: torch.Tensor, embedding2: torch.Tensor) -> torch.Tensor:
+        max_len = max(embedding1.size(1), embedding2.size(1))
+        embedding1_padded = functional.pad(embedding1, (0, 0, max_len - embedding1.size(1), 0))
+        embedding2_padded = functional.pad(embedding2, (0, 0, max_len - embedding2.size(1), 0))
+        # forward pass of the shared branch for each input
+        out1 = self.forward_lstm(embedding1_padded)
+        out2 = self.forward_lstm(embedding2_padded)
+        # forward pass of the common branch for the combined output
         combined = torch.abs(out1 - out2)
-        relatedness_score = torch.sigmoid(self.fc(combined))
-        return relatedness_score
+        return torch.sigmoid(self.common_branch(combined))
 
 
 class STRSiameseLSTM(STRModelBase):
-    def __init__(self, language: str, data_split: str, transformer_name: str = 'mBERT',
-                 learning_rate: float = 0.001, verbose: Verbose = Verbose.DEFAULT,
-                 data_manager: DataManagerWithTokenEmbeddings = None):
+    def __init__(self, data_manager: DataManagerWithTokenEmbeddings, learning_rate: float = 0.001,
+                 verbose: Verbose = Verbose.DEFAULT):
         super().__init__(verbose)
-        self.name = 'Siamese LSTM'
-        if data_manager is None:
-            self.data = DataManagerWithTokenEmbeddings.load(language, data_split, transformer_name)
-        else:
-            self.data = data_manager
-
-        self.model = SiameseLSTM(self.data.embedding_dim, self.data.embedding_dim * 2)
-        self.optimizer = Adam(self.model.parameters(), lr=learning_rate)
+        self.name: str = 'Siamese LSTM'
+        self.data: DataManagerWithTokenEmbeddings = data_manager
+        self.model: SiameseLSTM = SiameseLSTM(self.data.embedding_dim, self.data.embedding_dim * 2)
+        self.optimizer: Adam = Adam(self.model.parameters(), lr=learning_rate)
 
 
-def evaluate_siamese_lstm(language: str, data_split: str, transformer_name: str) -> None:
-    siamese_lstm = STRSiameseLSTM(language=language, data_split=data_split, verbose=Verbose.SILENT,
-                                  transformer_name=transformer_name)
+def evaluate_siamese_lstm(data_manager: DataManagerWithTokenEmbeddings) -> None:
+    siamese_lstm = STRSiameseLSTM(data_manager, verbose=Verbose.SILENT)
     siamese_lstm.train(epochs=10)
     siamese_lstm.evaluate()
 
 
 def main() -> None:
     language, data_split = parse_program_args()
-    siamese_lstm = STRSiameseLSTM(language, data_split, 'LaBSE')
-    # print('Embedding dim:', siamese_lstm.data.embedding_dim)
-    # print('Number of tokens in Train set 1st sentence from each pair:',
-    #       len(siamese_lstm.data.token_embeddings['Train'][0][0]))
-    # print('Number of tokens in Train set 2nd sentence from each pair:',
-    #       len(siamese_lstm.data.token_embeddings['Train'][1][0]))
-    # print('Number of tokens in Dev set 1st sentence from each pair:',
-    #       len(siamese_lstm.data.token_embeddings['Dev'][0][0]))
-    # print('Number of tokens in Dev set 2nd sentence from each pair:',
-    #       len(siamese_lstm.data.token_embeddings['Dev'][1][0]))
-    # print('Number of tokens in Test set 1st sentence from each pair:',
-    #       len(siamese_lstm.data.token_embeddings['Test'][0][0]))
-    # print('Number of tokens in Test set 2nd sentence from each pair:',
-    #       len(siamese_lstm.data.token_embeddings['Test'][1][0]))
+    data_manager = DataManagerWithTokenEmbeddings.load(language, data_split, 'LaBSE')
+
+    siamese_lstm = STRSiameseLSTM(data_manager)
     siamese_lstm.train(epochs=50, early_stopping=Eso.LOSS)
     siamese_lstm.evaluate(dataset='Train')
     siamese_lstm.evaluate()

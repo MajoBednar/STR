@@ -5,11 +5,11 @@ import torch.nn as nn
 class EarlyStoppingData:
     def __init__(self, early_stopping: Eso, patience: int):
         self.early_stopping: Eso = early_stopping
-        self.patience = patience
-        self.best_val_correlation = -1
-        self.best_val_loss = float('inf')
-        self.no_improvement_count = 0
-        self.best_model_state = None
+        self.patience: int = patience
+        self.best_val_correlation: float = -1.0
+        self.best_val_loss: float = float('inf')
+        self.no_improvement_count: int = 0
+        self.best_model_state: any = None
 
     def update(self, val_corr: float, val_loss: float, model: nn.Module) -> None:
         if self.early_stopping == Eso.NONE:

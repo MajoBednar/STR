@@ -10,7 +10,7 @@ class DataManager:
     def __init__(self, language: str, data_split: str):
         self.language: str = language
         self.data_split: str = data_split
-        self.warning = False
+        self.warning: bool = False
 
         data = self.__initialize_data()
         self.scores: dict[str, list[float]] = {
@@ -23,24 +23,20 @@ class DataManager:
             'Dev': data[4],
             'Test': data[5]
         }
-        self.spearman_correlation: float = 0
-
-    def set_spearman_correlation(self, true_scores, predicted_scores):
-        self.spearman_correlation = self.calculate_spearman_correlation(true_scores, predicted_scores)
 
     @staticmethod
-    def calculate_spearman_correlation(true_scores, predicted_scores):
+    def calculate_spearman_correlation(true_scores: iter, predicted_scores: iter) -> float:
         spearman_correlation, _ = spearmanr(true_scores, predicted_scores)
         return spearman_correlation
 
-    def print_results(self, relatedness_model: str, transformer_model: str = 'No Transformer',
+    def print_results(self, correlation: float, relatedness_model: str, transformer_model: str = 'No Transformer',
                       dataset: str = 'Test') -> None:
         print(f'Language:             {FULL[self.language]}')
         print(f'Transformer Model:    {transformer_model}')
         print(f'STR Model:            {relatedness_model}')
         print(f'Data Split:           {self.data_split.capitalize()}')
         print(f'Set:                  {dataset}')
-        print(f'Spearman Correlation: {self.spearman_correlation:.3f}')
+        print(f'Spearman Correlation: {correlation:.3f}')
         if self.warning:
             print(f'WARNING: Some datasets were missing and were replaced with existing datasets')
         print()
@@ -50,7 +46,7 @@ class DataManager:
         list_1, list_2 = zip(*sentence_pairs)
         return list(list_1), list(list_2)
 
-    def _save(self, transformer_model: str, directory: str):
+    def _save(self, transformer_model: str, directory: str) -> None:
         if not os.path.exists(directory):
             os.makedirs(directory)
 
@@ -70,6 +66,7 @@ class DataManager:
         if not os.path.exists(path + file):
             file = self.__replace_missing_dataset(dataset=dataset)
             self.warning = True
+
         df = pd.read_csv(path + file)
         scores = self.__load_scores(df)
         sentence_pairs = self.__load_sentence_pairs(df)
