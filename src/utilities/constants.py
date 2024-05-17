@@ -15,24 +15,16 @@ FULL_LANGUAGE_NAME = {
 SENTENCE_SEPARATOR = '\n'
 
 SENTENCE_TRANSFORMERS = {
-    'all MiniLM': 'all-MiniLM-L6-v2',                                           # eng
     'paraphrase multilingual miniLM': 'paraphrase-multilingual-MiniLM-L12-v2',  # all
     'mBERT': 'google-bert/bert-base-multilingual-cased',                        # all
     'XLMR': 'FacebookAI/xlm-roberta-base',                                      # all
     'LaBSE': 'sentence-transformers/LaBSE',                                     # all
-    'ALBETO': 'dccuchile/albert-base-spanish',                                  # esp
-    'BETO': 'dccuchile/bert-base-spanish-wwm-cased',                            # esp
-    'RoBERTa-BNE': 'PlanTL-GOB-ES/roberta-base-bne'                             # esp
 }
 
 TOKEN_TRANSFORMERS = {
     'mBERT': 'google-bert/bert-base-multilingual-cased',                        # all
     'XLMR': 'FacebookAI/xlm-roberta-base',                                      # all
     'LaBSE': 'sentence-transformers/LaBSE',                                     # all
-    'ALBETO': 'dccuchile/albert-base-spanish',                                  # esp
-    'BETO': 'dccuchile/bert-base-spanish-wwm-cased',                            # esp
-    'RoBERTa-BNE': 'PlanTL-GOB-ES/roberta-base-bne',                            # esp
-    'RoBERTa': 'FacebookAI/roberta-base'                                        # eng
 }
 
 
