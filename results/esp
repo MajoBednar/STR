@@ -1,6 +1,5 @@
 Lexical Overlap:
-    Train:    0.
-    Dev:      0.
-    Test:     0.
-    Combined: 0.
+    Train:    0.618
+    Dev:      0.634
+    Test:     0.599
 --------------------------------------
