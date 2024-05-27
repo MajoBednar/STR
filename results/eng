@@ -3,3 +3,9 @@ Lexical Overlap:
     Dev:      0.535
     Test:     0.499
 --------------------------------------
+Cosine Similarity:
+    Train:    0.795 (miniLM)
+    Dev:      0.796 (miniLM)
+    Test:     0.782 (miniLM)
+Best Transformer:
+--------------------------------------
