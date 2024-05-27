@@ -8,10 +8,10 @@ def find_best_transformers(model: any, transformer: str, best_transformers: dict
         best_correlations['Train'] = corr_train
         best_transformers['Train'] = transformer
     if corr_dev > best_correlations['Dev']:
-        best_correlations['Dev'] = corr_train
+        best_correlations['Dev'] = corr_dev
         best_transformers['Dev'] = transformer
     if corr_test > best_correlations['Test']:
-        best_correlations['Test'] = corr_train
+        best_correlations['Test'] = corr_test
         best_transformers['Test'] = transformer
 
     return best_transformers, best_correlations
