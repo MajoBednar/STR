@@ -7,5 +7,5 @@ Cosine Similarity:
     Train:    0.795 (miniLM)
     Dev:      0.796 (miniLM)
     Test:     0.782 (miniLM)
-Best Transformer:
+Best Transformer: miniLM
 --------------------------------------

@@ -4,8 +4,8 @@ Lexical Overlap:
     Test:     0.599
 --------------------------------------
 Cosine Similarity:
-    Train:    0. ()
-    Dev:      0. ()
-    Test:     0. ()
-Best Transformer:
+    Train:    0.651 (mBERT)
+    Dev:      0.644 (LaBSE)
+    Test:     0.599 (mBERT)
+Best Transformer: mBERT, runner-up LaBSE
 --------------------------------------
