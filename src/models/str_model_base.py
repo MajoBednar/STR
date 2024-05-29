@@ -19,6 +19,7 @@ class STRModelBase:
         early_stopping_data = EarlyStoppingData(early_stopping, patience)
 
         for epoch in range(epochs):
+            self.model.train()
             running_loss = 0.0
             for batch in range(0, len(self.data.sentence_pairs['Train']), batch_size):
                 running_loss = self.train_batch(batch, batch_size, running_loss)
@@ -63,6 +64,7 @@ class STRModelBase:
         return self.model(input1, input2)
 
     def validate(self, dataset: str) -> tuple[torch.Tensor, torch.Tensor, float, float]:
+        self.model.eval()
         with torch.no_grad():
             predicted_scores = self.predict(dataset)
             true_scores = torch.tensor(self.data.scores[dataset]).unsqueeze(1)
@@ -71,11 +73,10 @@ class STRModelBase:
         return predicted_scores, true_scores, loss, correlation
 
     def evaluate(self, dataset: str = 'Test') -> float:
-        predicted_scores, true_scores, _, _ = self.validate(dataset)
+        predicted_scores, true_scores, _, correlation = self.validate(dataset)
         if self.verbose == Verbose.EXPRESSIVE:
             print(predicted_scores)
 
-        correlation = self.data.calculate_spearman_correlation(true_scores, predicted_scores)
         self.data.print_results(correlation, self.name, self.data.transformer_name, dataset)
         return correlation
 

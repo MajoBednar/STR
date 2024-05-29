@@ -1,74 +1,87 @@
 import optuna
 
 from src.utilities.program_args import parse_program_args
-from src.utilities.constants import SENTENCE_TRANSFORMERS
+from src.utilities.constants import SENTENCE_TRANSFORMERS, Verbose
 from src.embeddings.sentence_embeddings import DataManagerWithSentenceEmbeddings
-from src.models.str_siamese_mlp import STRSiameseMLP
+from src.models.str_siamese_mlp import SiameseMLP, STRSiameseMLP
+from .hyperparameter_tuning import get_activation, get_optimizer, get_shared_layer_sizes_mlp, get_common_layer_sizes_mlp
 
-"""Hyperparameters for Siamese MLP: 
-Architecture: shared layer, common layer, activation function, dropout
+""" Hyperparameters for Siamese MLP: 
 Transformer;
-Optimizer: type, learning rate;
+Architecture: shared layers, common layers, activation function, dropout
+Optimizer: type, learning rate, weight decay;
 Early stopping: type, patience;
-Training: epochs, batch size; """
+Training: epochs, batch size; 
+Optional: gradient clipping; """
 
 
-def objective(trial):
+def objective(trial: optuna.trial, language: str, data_split: str):
     # Hyperparameters to tune
-    input_dim = 300
-    shared_layer_sizes = trial.suggest_categorical('shared_layer_sizes',
-                                                   [[1024, 512, 256, 128], [512, 256, 128], [1024, 512, 256]])
-    common_layer_sizes = trial.suggest_categorical('common_layer_sizes', [[32, 1], [64, 32, 1], [128, 64, 32, 1]])
-    activation = trial.suggest_categorical('activation', [nn.ReLU, nn.LeakyReLU])
+    transformer = trial.suggest_categorical('transformer', [name for name in SENTENCE_TRANSFORMERS])
+    shared_layers_size = trial.suggest_categorical('shared_layers_size', ('Small', 'Medium', 'Big'))
+    common_layers_size = trial.suggest_categorical('common_layers_size', ('Small', 'Medium', 'Big'))
+    activation_name = trial.suggest_categorical('activation', ('ReLU', 'LeakyReLU'))
     dropout = trial.suggest_float('dropout', 0.0, 0.5)
-    optimizer_name = trial.suggest_categorical('optimizer', ['Adam', 'SGD', 'RMSprop'])
-    learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1e-2)
-    weight_decay = trial.suggest_loguniform('weight_decay', 1e-6, 1e-2)
-    batch_size = trial.suggest_categorical('batch_size', [16, 32, 64])
-    num_epochs = trial.suggest_int('num_epochs', 10, 50)
-    gradient_clip = trial.suggest_float('gradient_clip', 0.0, 1.0)
+    optimizer_name = trial.suggest_categorical('optimizer', ('Adam', 'SGD', 'RMSprop'))
+    learning_rate = trial.suggest_float('learning_rate', 1e-5, 1e-2, log=True)
+    weight_decay = trial.suggest_float('weight_decay', 1e-6, 1e-2, log=True)
+    early_stopping_option = trial.suggest_categorical('early_stopping_option', (0, 1, 2))
+    patience = trial.suggest_categorical('patience', (20, 30, 100))
+    batch_size = trial.suggest_categorical('batch_size', (16, 32, 64))
+    num_epochs = trial.suggest_int('num_epochs', 1, 10)
+    # gradient_clip = trial.suggest_float('gradient_clip', 0.0, 1.0)
 
-    model = SiameseMLP(input_dim=input_dim,
-                       shared_layer_sizes=shared_layer_sizes,
-                       common_layer_sizes=common_layer_sizes,
-                       activation=activation,
-                       dropout=dropout)
+    # Setup parameters for the Siamese MLP model
+    data_manager = DataManagerWithSentenceEmbeddings.load(language, data_split, transformer)
+    shared_layer_sizes = get_shared_layer_sizes_mlp(shared_layers_size)
+    common_layer_sizes = get_common_layer_sizes_mlp(common_layers_size)
+    activation = get_activation(activation_name)
+    model_architecture = SiameseMLP(input_dim=data_manager.embedding_dim,
+                                    shared_layer_sizes=shared_layer_sizes,
+                                    common_layer_sizes=common_layer_sizes,
+                                    activation=activation,
+                                    dropout=dropout)
+    optimizer = get_optimizer(optimizer_name, model_architecture, learning_rate, weight_decay)
 
-    if optimizer_name == 'Adam':
-        optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
-    elif optimizer_name == 'SGD':
-        optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
-    elif optimizer_name == 'RMSprop':
-        optimizer = torch.optim.RMSprop(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
+    # Train and evaluate model with chosen hyperparameters
+    model = STRSiameseMLP(data_manager, model_architecture, learning_rate, optimizer, Verbose.SILENT)
+    model.train(num_epochs, batch_size, early_stopping_option, patience)
 
-    criterion = nn.BCELoss()
+    # after loss.backward() and before optimizer.step()
+    # if gradient_clip > 0:
+    #     nn.utils.clip_grad_norm_(model_architecture.parameters(), gradient_clip)
 
-    train_loader = DataLoader(MyDataset(train_data, train_labels), batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(MyDataset(val_data, val_labels), batch_size=batch_size, shuffle=False)
-
-    for epoch in range(num_epochs):
-        model.train()
-        for data, labels in train_loader:
-            optimizer.zero_grad()
-            outputs = model(data[0], data[1])
-            loss = criterion(outputs, labels)
-            loss.backward()
-            if gradient_clip > 0:
-                nn.utils.clip_grad_norm_(model.parameters(), gradient_clip)
-            optimizer.step()
-
-    model.eval()
-    val_loss = 0
-    with torch.no_grad():
-        for data, labels in val_loader:
-            outputs = model(data[0], data[1])
-            loss = criterion(outputs, labels)
-            val_loss += loss.item()
-
-    return val_loss
+    _, _, val_loss, val_corr = model.validate('Dev')
+    return val_corr
 
 
-study = optuna.create_study(direction='minimize')
-study.optimize(objective, n_trials=50)
+def main():
+    language, data_split = parse_program_args()
+    study = optuna.create_study(direction='maximize')
+    study.optimize(lambda trial: objective(trial, language, data_split), n_trials=3)
+    print('\nBest hyperparameters found:')
+    best_params = study.best_params
+    print(best_params)
+    print('With validation correlation:', study.best_value)
+    # Evaluate the best hyperparameters on the test set
+    data_manager = DataManagerWithSentenceEmbeddings.load(language, data_split, best_params['transformer'])
+    shared_layer_sizes = get_shared_layer_sizes_mlp(best_params['shared_layers_size'])
+    common_layer_sizes = get_common_layer_sizes_mlp(best_params['common_layers_size'])
+    activation = get_activation(best_params['activation'])
+    model_architecture = SiameseMLP(input_dim=data_manager.embedding_dim,
+                                    shared_layer_sizes=shared_layer_sizes,
+                                    common_layer_sizes=common_layer_sizes,
+                                    activation=activation,
+                                    dropout=best_params['dropout'])
+    optimizer = get_optimizer(best_params['optimizer'], model_architecture, best_params['learning_rate'],
+                              best_params['weight_decay'])
 
-print(study.best_params)
+    # Train and evaluate model with chosen hyperparameters
+    model = STRSiameseMLP(data_manager, model_architecture, best_params['learning_rate'], optimizer, Verbose.SILENT)
+    model.train(best_params['num_epochs'], best_params['batch_size'], best_params['early_stopping_option'],
+                best_params['patience'])
+    model.evaluate()
+
+
+if __name__ == '__main__':
+    main()

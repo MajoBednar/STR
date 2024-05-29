@@ -38,7 +38,7 @@ class SiameseLSTM(nn.Module):
 
 class STRSiameseLSTM(STRModelBase):
     def __init__(self, data_manager: DataManagerWithTokenEmbeddings, model: nn.Module = None,
-                 learning_rate: float = 0.001, optimizer: any = None, verbose: Verbose = Verbose.DEFAULT):
+                 learning_rate: float = 0.001, optimizer: torch.optim = None, verbose: Verbose = Verbose.DEFAULT):
         super().__init__(verbose)
         self.name: str = 'Siamese LSTM'
         self.data: DataManagerWithTokenEmbeddings = data_manager

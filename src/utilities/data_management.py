@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import pickle as pkl
+import numpy as np
 from scipy.stats import spearmanr
 
 from .constants import SENTENCE_SEPARATOR as SEP, FULL_LANGUAGE_NAME as FULL
@@ -27,6 +28,8 @@ class DataManager:
     @staticmethod
     def calculate_spearman_correlation(true_scores: iter, predicted_scores: iter) -> float:
         spearman_correlation, _ = spearmanr(true_scores, predicted_scores)
+        if np.isnan(spearman_correlation):
+            return -10
         return spearman_correlation
 
     def print_results(self, correlation: float, relatedness_model: str, transformer_model: str = 'No Transformer',

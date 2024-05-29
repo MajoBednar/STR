@@ -10,7 +10,7 @@ from .str_model_base import STRModelBase
 
 class SiameseMLP(nn.Module):
     def __init__(self, input_dim: int, shared_layer_sizes: tuple[int] = (1024, 512, 256, 128),
-                 common_layer_sizes: tuple[int] = (32, 1), activation: any = nn.ReLU, dropout: float = 0.0):
+                 common_layer_sizes: tuple[int] = (32, 1), activation: () = nn.ReLU, dropout: float = 0.0):
         super(SiameseMLP, self).__init__()
         # Create shared branch
         shared_layers = []
@@ -44,7 +44,7 @@ class SiameseMLP(nn.Module):
 
 class STRSiameseMLP(STRModelBase):
     def __init__(self, data_manager: DataManagerWithSentenceEmbeddings, model: nn.Module = None,
-                 learning_rate: float = 0.001, optimizer: any = None, verbose: Verbose = Verbose.DEFAULT):
+                 learning_rate: float = 0.001, optimizer: torch.optim = None, verbose: Verbose = Verbose.DEFAULT):
         super().__init__(verbose)
         self.name: str = 'Siamese MLP'
         self.data: DataManagerWithSentenceEmbeddings = data_manager
@@ -60,7 +60,7 @@ def evaluate_siamese_mlp(data_manager: DataManagerWithSentenceEmbeddings) -> Non
 
 def main() -> None:
     language, data_split = parse_program_args()
-    data_manager = DataManagerWithSentenceEmbeddings.load(language, data_split, 'miniLM')
+    data_manager = DataManagerWithSentenceEmbeddings.load(language, data_split, 'XLMR')
 
     siamese_mlp = STRSiameseMLP(data_manager)
     siamese_mlp.train(epochs=1, early_stopping=Eso.NONE, patience=20)
