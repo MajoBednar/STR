@@ -9,16 +9,30 @@ from .str_model_base import STRModelBase
 
 
 class SiameseMLP(nn.Module):
-    def __init__(self, input_dim):
+    def __init__(self, input_dim: int, shared_layer_sizes: tuple[int] = (1024, 512, 256, 128),
+                 common_layer_sizes: tuple[int] = (32, 1), activation: any = nn.ReLU, dropout: float = 0.0):
         super(SiameseMLP, self).__init__()
-
-        self.shared_branch = nn.Sequential(nn.Linear(input_dim, 1024), nn.ReLU(),
-                                           nn.Linear(1024, 512), nn.ReLU(),
-                                           nn.Linear(512, 256), nn.ReLU(),
-                                           nn.Linear(256, 128), nn.ReLU())
-
-        self.common_branch = nn.Sequential(nn.Linear(128, 32), nn.ReLU(),
-                                           nn.Linear(32, 1))
+        # Create shared branch
+        shared_layers = []
+        prev_size = input_dim
+        for size in shared_layer_sizes:
+            shared_layers.append(nn.Linear(prev_size, size))
+            shared_layers.append(activation())
+            if dropout > 0:
+                shared_layers.append(nn.Dropout(dropout))
+            prev_size = size
+        self.shared_branch = nn.Sequential(*shared_layers)
+        # Create common branch
+        common_layers = []
+        prev_size = shared_layer_sizes[-1]
+        for size in common_layer_sizes:
+            common_layers.append(nn.Linear(prev_size, size))
+            if size != 1:  # Apply activation and dropout to all but the last layer
+                common_layers.append(activation())
+                if dropout > 0:
+                    common_layers.append(nn.Dropout(dropout))
+            prev_size = size
+        self.common_branch = nn.Sequential(*common_layers)
 
     def forward(self, embedding1: torch.Tensor, embedding2: torch.Tensor) -> torch.Tensor:
         out1 = self.shared_branch(embedding1)
@@ -29,13 +43,13 @@ class SiameseMLP(nn.Module):
 
 
 class STRSiameseMLP(STRModelBase):
-    def __init__(self, data_manager: DataManagerWithSentenceEmbeddings, learning_rate: float = 0.001,
-                 verbose: Verbose = Verbose.DEFAULT):
+    def __init__(self, data_manager: DataManagerWithSentenceEmbeddings, model: nn.Module = None,
+                 learning_rate: float = 0.001, optimizer: any = None, verbose: Verbose = Verbose.DEFAULT):
         super().__init__(verbose)
         self.name: str = 'Siamese MLP'
         self.data: DataManagerWithSentenceEmbeddings = data_manager
-        self.model: SiameseMLP = SiameseMLP(self.data.embedding_dim)
-        self.optimizer: Adam = Adam(self.model.parameters(), lr=learning_rate)
+        self.model: SiameseMLP = SiameseMLP(self.data.embedding_dim) if model is None else model
+        self.optimizer: Adam = Adam(self.model.parameters(), lr=learning_rate) if optimizer is None else optimizer
 
 
 def evaluate_siamese_mlp(data_manager: DataManagerWithSentenceEmbeddings) -> None:
@@ -46,10 +60,10 @@ def evaluate_siamese_mlp(data_manager: DataManagerWithSentenceEmbeddings) -> Non
 
 def main() -> None:
     language, data_split = parse_program_args()
-    data_manager = DataManagerWithSentenceEmbeddings.load(language, data_split, 'LaBSE')
+    data_manager = DataManagerWithSentenceEmbeddings.load(language, data_split, 'miniLM')
 
     siamese_mlp = STRSiameseMLP(data_manager)
-    siamese_mlp.train(epochs=150, early_stopping=Eso.CORR, patience=20)
+    siamese_mlp.train(epochs=1, early_stopping=Eso.NONE, patience=20)
     siamese_mlp.evaluate(dataset='Train')
     siamese_mlp.evaluate()
 

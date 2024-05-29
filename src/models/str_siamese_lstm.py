@@ -10,7 +10,7 @@ from .str_model_base import STRModelBase
 
 
 class SiameseLSTM(nn.Module):
-    def __init__(self, embedding_dim, hidden_dim, num_layers=1):
+    def __init__(self, embedding_dim: int, hidden_dim: int, num_layers: int = 1):
         super(SiameseLSTM, self).__init__()
         self.embedding_dim = embedding_dim
         self.hidden_dim = hidden_dim
@@ -37,13 +37,14 @@ class SiameseLSTM(nn.Module):
 
 
 class STRSiameseLSTM(STRModelBase):
-    def __init__(self, data_manager: DataManagerWithTokenEmbeddings, learning_rate: float = 0.001,
-                 verbose: Verbose = Verbose.DEFAULT):
+    def __init__(self, data_manager: DataManagerWithTokenEmbeddings, model: nn.Module = None,
+                 learning_rate: float = 0.001, optimizer: any = None, verbose: Verbose = Verbose.DEFAULT):
         super().__init__(verbose)
         self.name: str = 'Siamese LSTM'
         self.data: DataManagerWithTokenEmbeddings = data_manager
-        self.model: SiameseLSTM = SiameseLSTM(self.data.embedding_dim, self.data.embedding_dim * 2)
-        self.optimizer: Adam = Adam(self.model.parameters(), lr=learning_rate)
+        self.model: SiameseLSTM = SiameseLSTM(self.data.embedding_dim,
+                                              self.data.embedding_dim * 2) if model is None else model
+        self.optimizer: Adam = Adam(self.model.parameters(), lr=learning_rate) if optimizer is None else optimizer
 
 
 def evaluate_siamese_lstm(data_manager: DataManagerWithTokenEmbeddings) -> None:

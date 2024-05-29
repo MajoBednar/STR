@@ -15,7 +15,7 @@ FULL_LANGUAGE_NAME = {
 SENTENCE_SEPARATOR = '\n'
 
 SENTENCE_TRANSFORMERS = {
-    'paraphrase multilingual miniLM': 'paraphrase-multilingual-MiniLM-L12-v2',  # all
+    'miniLM': 'paraphrase-multilingual-MiniLM-L12-v2',                          # all
     'mBERT': 'google-bert/bert-base-multilingual-cased',                        # all
     'XLMR': 'FacebookAI/xlm-roberta-base',                                      # all
     'LaBSE': 'sentence-transformers/LaBSE',                                     # all
