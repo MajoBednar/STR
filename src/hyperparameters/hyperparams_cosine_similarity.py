@@ -1,8 +1,8 @@
 from src.utilities.program_args import parse_program_args
 from src.utilities.constants import SENTENCE_TRANSFORMERS
-from src.utilities.hyperparameter_tuning import find_best_transformers
+from .hyperparameter_tuning import find_best_transformers
 from src.embeddings.sentence_embeddings import DataManagerWithSentenceEmbeddings
-from .str_cosine_similarity import STRCosineSimilarity
+from src.baselines.str_cosine_similarity import STRCosineSimilarity
 
 
 def main() -> None:

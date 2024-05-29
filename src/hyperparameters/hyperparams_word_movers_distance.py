@@ -1,8 +1,8 @@
 from src.utilities.program_args import parse_program_args
 from src.utilities.constants import TOKEN_TRANSFORMERS
-from src.utilities.hyperparameter_tuning import find_best_transformers
+from .hyperparameter_tuning import find_best_transformers
 from src.embeddings.token_embeddings import DataManagerWithTokenEmbeddings
-from .str_word_movers_distance import STRWordMoversDistance
+from src.models.str_word_movers_distance import STRWordMoversDistance
 
 
 def main() -> None:
