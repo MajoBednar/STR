@@ -1,4 +1,5 @@
 import optuna
+import torch
 
 from src.utilities.program_args import parse_program_args
 from src.utilities.constants import SENTENCE_TRANSFORMERS, Verbose
@@ -28,7 +29,7 @@ def objective(trial: optuna.trial, language: str, data_split: str):
     early_stopping_option = trial.suggest_categorical('early_stopping_option', (0, 1, 2))
     patience = trial.suggest_categorical('patience', (20, 30, 100))
     batch_size = trial.suggest_categorical('batch_size', (16, 32, 64))
-    num_epochs = trial.suggest_int('num_epochs', 1, 10)
+    num_epochs = trial.suggest_int('num_epochs', 1, 200)
     # gradient_clip = trial.suggest_float('gradient_clip', 0.0, 1.0)
 
     # Setup parameters for the Siamese MLP model
@@ -41,6 +42,7 @@ def objective(trial: optuna.trial, language: str, data_split: str):
                                     common_layer_sizes=common_layer_sizes,
                                     activation=activation,
                                     dropout=dropout)
+    model_architecture = torch.jit.script(model_architecture)
     optimizer = get_optimizer(optimizer_name, model_architecture, learning_rate, weight_decay)
 
     # Train and evaluate model with chosen hyperparameters
@@ -73,6 +75,7 @@ def main():
                                     common_layer_sizes=common_layer_sizes,
                                     activation=activation,
                                     dropout=best_params['dropout'])
+    model_architecture = torch.jit.script(model_architecture)
     optimizer = get_optimizer(best_params['optimizer'], model_architecture, best_params['learning_rate'],
                               best_params['weight_decay'])
 
