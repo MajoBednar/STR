@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from torch.optim import Adam
+from torch.optim import Adam, RMSprop
 
 from src.utilities.program_args import parse_program_args
 from src.utilities.constants import Verbose, EarlyStoppingOptions as Eso
@@ -9,8 +9,8 @@ from .str_model_base import STRModelBase
 
 
 class SiameseMLP(nn.Module):
-    def __init__(self, input_dim: int, shared_layer_sizes: tuple[int] = (1024, 512, 256, 128),
-                 common_layer_sizes: tuple[int] = (32, 1), activation: () = nn.ReLU, dropout: float = 0.0):
+    def __init__(self, input_dim: int, shared_layer_sizes: tuple = (1024, 512, 256, 128),
+                 common_layer_sizes: tuple = (32, 1), activation: () = nn.ReLU, dropout: float = 0.0):
         super(SiameseMLP, self).__init__()
         # Create shared branch
         shared_layers = []
@@ -60,11 +60,15 @@ def evaluate_siamese_mlp(data_manager: DataManagerWithSentenceEmbeddings) -> Non
 
 def main() -> None:
     language, data_split = parse_program_args()
-    data_manager = DataManagerWithSentenceEmbeddings.load(language, data_split, 'XLMR')
+    data_manager = DataManagerWithSentenceEmbeddings.load(language, data_split, 'miniLM')
 
-    siamese_mlp = STRSiameseMLP(data_manager)
-    siamese_mlp.train(epochs=1, early_stopping=Eso.NONE, patience=20)
+    architecture = SiameseMLP(data_manager.embedding_dim, (1024, 512, 256), (32, 1), nn.LeakyReLU, 0.165)
+    optimizer = Adam(architecture.parameters(), lr=1.1e-5, weight_decay=0.0003)
+
+    siamese_mlp = STRSiameseMLP(data_manager, architecture, 0, optimizer)
+    siamese_mlp.train(epochs=27, batch_size=64, early_stopping=Eso.LOSS, patience=200)
     siamese_mlp.evaluate(dataset='Train')
+    siamese_mlp.evaluate(dataset='Dev')
     siamese_mlp.evaluate()
 
 

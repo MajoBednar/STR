@@ -9,3 +9,20 @@ Cosine Similarity:
     Test:    -0.046 (miniLM)
 Best Transformer: all roughly the same
 --------------------------------------
+Siamese MLP:
+    Train:    0.900
+    Dev:      0.688
+    Test:     0.587
+Best hyperparameters:
+    Transformer: XLMR
+    Architecture size: Small+Medium
+    Activation function: ReLU
+    Dropout: 0.4
+    Optimizer: RMSprop
+    Learning rate: 0.001
+    Weight decay: 2.4e-6
+    Early stopping: None
+    Patience: -
+    Batch size: 64
+    Epochs: 124
+--------------------------------------

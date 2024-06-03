@@ -9,3 +9,20 @@ Cosine Similarity:
     Test:     0.728 (LaBSE)
 Best Transformer: LaBSE
 --------------------------------------
+Siamese MLP:
+    Train:    0.992
+    Dev:      0.592
+    Test:     0.471
+Best hyperparameters:
+    Transformer: miniLM
+    Architecture size: Medium+Medium
+    Activation function: LeakyReLU
+    Dropout: 3e-4
+    Optimizer: Adam
+    Learning rate: 1.5e-3
+    Weight decay: 4.2e-6
+    Early stopping: Loss
+    Patience: 30
+    Batch size: 16
+    Epochs: 105
+--------------------------------------

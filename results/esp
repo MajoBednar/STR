@@ -9,3 +9,20 @@ Cosine Similarity:
     Test:     0.599 (mBERT)
 Best Transformer: mBERT, runner-up LaBSE
 --------------------------------------
+Siamese MLP:
+    Train:    0.716
+    Dev:      0.553
+    Test:     0.345
+Best hyperparameters:
+    Transformer: XLMR
+    Architecture size: Big+Big
+    Activation function: ReLU
+    Dropout: 0.2
+    Optimizer: RMSprop
+    Learning rate: 0.0004
+    Weight decay: 3e-6
+    Early stopping: Loss
+    Patience: 30
+    Batch size: 16
+    Epochs: 29
+--------------------------------------
