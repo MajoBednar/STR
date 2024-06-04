@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.optim import Adam, RMSprop, SGD
+import optuna
 
 
 def find_best_transformers(model: any, transformer: str, best_transformers: dict[str, str],
@@ -20,6 +21,19 @@ def find_best_transformers(model: any, transformer: str, best_transformers: dict
         best_transformers['Test'] = transformer
 
     return best_transformers, best_correlations
+
+
+def hyperparams_for_optimizer(trial: optuna.trial) -> tuple[any, any, any]:
+    optimizer_name = trial.suggest_categorical('optimizer', ('Adam', 'SGD', 'RMSprop'))
+    learning_rate = trial.suggest_float('learning_rate', 1e-5, 1e-2, log=True)
+    weight_decay = trial.suggest_float('weight_decay', 1e-6, 1e-2, log=True)
+    return optimizer_name, learning_rate, weight_decay
+
+
+def print_study_results(study: optuna.Study) -> None:
+    print('\nBest hyperparameters found:')
+    print(study.best_params)
+    print('With validation correlation:', study.best_value)
 
 
 def get_activation(activation_name: str) -> ():

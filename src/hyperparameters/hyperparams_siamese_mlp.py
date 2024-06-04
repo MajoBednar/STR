@@ -5,7 +5,8 @@ from src.utilities.program_args import parse_program_args
 from src.utilities.constants import SENTENCE_TRANSFORMERS, Verbose
 from src.embeddings.sentence_embeddings import DataManagerWithSentenceEmbeddings
 from src.models.str_siamese_mlp import SiameseMLP, STRSiameseMLP
-from .hyperparameter_tuning import get_activation, get_optimizer, get_shared_layer_sizes_mlp, get_common_layer_sizes_mlp
+from .hyperparameter_tuning import (get_activation, print_study_results, get_optimizer, get_shared_layer_sizes_mlp,
+                                    get_common_layer_sizes_mlp)
 
 """ Hyperparameters for Siamese MLP: 
 Transformer;
@@ -13,7 +14,8 @@ Architecture: shared layers, common layers, activation function, dropout
 Optimizer: type, learning rate, weight decay;
 Early stopping: type, patience;
 Training: epochs, batch size; 
-Optional: gradient clipping; """
+Optional: gradient clipping; 
+"""
 
 
 def objective(trial: optuna.trial, language: str, data_split: str):
@@ -60,11 +62,9 @@ def objective(trial: optuna.trial, language: str, data_split: str):
 def main():
     language, data_split = parse_program_args()
     study = optuna.create_study(direction='maximize')
-    study.optimize(lambda trial: objective(trial, language, data_split), n_trials=3)
-    print('\nBest hyperparameters found:')
+    study.optimize(lambda trial: objective(trial, language, data_split), n_trials=100)
     best_params = study.best_params
-    print(best_params)
-    print('With validation correlation:', study.best_value)
+    print_study_results(study)
     # Evaluate the best hyperparameters on the test set
     data_manager = DataManagerWithSentenceEmbeddings.load(language, data_split, best_params['transformer'])
     shared_layer_sizes = get_shared_layer_sizes_mlp(best_params['shared_layers_size'])
@@ -83,6 +83,8 @@ def main():
     model = STRSiameseMLP(data_manager, model_architecture, best_params['learning_rate'], optimizer, Verbose.SILENT)
     model.train(best_params['num_epochs'], best_params['batch_size'], best_params['early_stopping_option'],
                 best_params['patience'])
+    model.evaluate('Train')
+    model.evaluate('Dev')
     model.evaluate()
 
 
