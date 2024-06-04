@@ -29,7 +29,7 @@ def objective(trial: optuna.trial, language: str, data_split: str):
 
     # Setup parameters for the Siamese LSTM model
     data_manager = DataManagerWithTokenEmbeddings.load(language, data_split, transformer)
-    model_architecture = SiameseLSTM(data_manager.embedding_dim, data_manager.embedding_dim * hidden_dim_factor,
+    model_architecture = SiameseLSTM(data_manager.embedding_dim, int(data_manager.embedding_dim * hidden_dim_factor),
                                      num_layers)
     model_architecture = torch.jit.script(model_architecture)
     optimizer = get_optimizer(optimizer_name, model_architecture, learning_rate, weight_decay)
@@ -50,7 +50,7 @@ def main():
     print_study_results(study)
     # Evaluate the best hyperparameters on the test set
     data_manager = DataManagerWithTokenEmbeddings.load(language, data_split, best_params['transformer'])
-    hidden_dim = data_manager.embedding_dim * best_params['hidden_dim_factor']
+    hidden_dim = int(data_manager.embedding_dim * best_params['hidden_dim_factor'])
     model_architecture = SiameseLSTM(data_manager.embedding_dim, hidden_dim, best_params['num_layers'])
     model_architecture = torch.jit.script(model_architecture)
     optimizer = get_optimizer(best_params['optimizer'], model_architecture, best_params['learning_rate'],
