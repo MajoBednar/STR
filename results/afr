@@ -26,3 +26,19 @@ Best hyperparameters:
     Batch size: 16
     Epochs: 105
 --------------------------------------
+Siamese LSTM: (only 20 trials)
+    Train:    0.991
+    Dev:      0.626
+    Test:     0.604
+Best hyperparameters:
+    Transformer: mBERT
+    Hidden dim factor: 1/2
+    Number of layers: 1
+    Optimizer: RMSprop
+    Learning rate: 0.0004
+    Weight decay: 7e-6
+    Early stopping: Correlation
+    Patience: 20
+    Batch size: 32
+    Epochs: 20
+--------------------------------------
