@@ -6,7 +6,8 @@ from src.utilities.constants import SENTENCE_TRANSFORMERS, Verbose
 from src.embeddings.sentence_embeddings import DataManagerWithSentenceEmbeddings
 from src.models.str_siamese_mlp import SiameseMLP, STRSiameseMLP
 from .hyperparameter_tuning import (get_activation, print_study_results, get_optimizer, get_shared_layer_sizes_mlp,
-                                    get_common_layer_sizes_mlp)
+                                    get_common_layer_sizes_mlp, hyperparams_for_optimizer,
+                                    hyperparams_for_early_stopping)
 
 """ Hyperparameters for Siamese MLP: 
 Transformer;
@@ -24,11 +25,8 @@ def objective(trial: optuna.trial, language: str, data_split: str):
     common_layers_size = trial.suggest_categorical('common_layers_size', ('Small', 'Medium', 'Big'))
     activation_name = trial.suggest_categorical('activation', ('ReLU', 'LeakyReLU'))
     dropout = trial.suggest_float('dropout', 0.0, 0.5)
-    optimizer_name = trial.suggest_categorical('optimizer', ('Adam', 'SGD', 'RMSprop'))
-    learning_rate = trial.suggest_float('learning_rate', 1e-5, 1e-2, log=True)
-    weight_decay = trial.suggest_float('weight_decay', 1e-6, 1e-2, log=True)
-    early_stopping_option = trial.suggest_categorical('early_stopping_option', (0, 1, 2))
-    patience = trial.suggest_categorical('patience', (20, 30, 100))
+    optimizer_name, learning_rate, weight_decay = hyperparams_for_optimizer(trial)
+    early_stopping_option, patience = hyperparams_for_early_stopping(trial)
     batch_size = trial.suggest_categorical('batch_size', (16, 32, 64))
     num_epochs = trial.suggest_int('num_epochs', 1, 200)
     # gradient_clip = trial.suggest_float('gradient_clip', 0.0, 1.0)

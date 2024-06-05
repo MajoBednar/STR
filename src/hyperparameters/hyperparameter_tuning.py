@@ -30,6 +30,12 @@ def hyperparams_for_optimizer(trial: optuna.trial) -> tuple[any, any, any]:
     return optimizer_name, learning_rate, weight_decay
 
 
+def hyperparams_for_early_stopping(trial: optuna.trial) -> tuple[any, any]:
+    early_stopping_option = trial.suggest_categorical('early_stopping_option', (0, 1, 2))
+    patience = trial.suggest_categorical('patience', (20, 30, 100))
+    return early_stopping_option, patience
+
+
 def print_study_results(study: optuna.Study) -> None:
     print('\nBest hyperparameters found:')
     print(study.best_params)

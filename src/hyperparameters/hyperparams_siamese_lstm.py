@@ -5,7 +5,8 @@ from src.utilities.program_args import parse_program_args
 from src.utilities.constants import TOKEN_TRANSFORMERS, Verbose
 from src.embeddings.token_embeddings import DataManagerWithTokenEmbeddings
 from src.models.str_siamese_lstm import SiameseLSTM, STRSiameseLSTM
-from .hyperparameter_tuning import hyperparams_for_optimizer, print_study_results, get_optimizer
+from .hyperparameter_tuning import (hyperparams_for_optimizer, hyperparams_for_early_stopping, print_study_results,
+                                    get_optimizer)
 
 """ Hyperparameters for Siamese LSTM: 
 Transformer;
@@ -22,8 +23,7 @@ def objective(trial: optuna.trial, language: str, data_split: str):
     hidden_dim_factor = trial.suggest_categorical('hidden_dim_factor', (1/2, 1, 2, 3))
     num_layers = trial.suggest_categorical('num_layers', (1, 2, 3))
     optimizer_name, learning_rate, weight_decay = hyperparams_for_optimizer(trial)
-    early_stopping_option = trial.suggest_categorical('early_stopping_option', (0, 1, 2))
-    patience = trial.suggest_categorical('patience', (20, 30, 100))
+    early_stopping_option, patience = hyperparams_for_early_stopping(trial)
     batch_size = trial.suggest_categorical('batch_size', (16, 32, 64))
     num_epochs = trial.suggest_int('num_epochs', 1, 30)
 
