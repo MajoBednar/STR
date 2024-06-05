@@ -49,6 +49,7 @@ class STRSiameseMLP(STRModelBase):
         self.name: str = 'Siamese MLP'
         self.data: DataManagerWithSentenceEmbeddings = data_manager
         self.model: SiameseMLP = SiameseMLP(self.data.embedding_dim) if model is None else model
+        self.model.to(self.device)
         self.optimizer: Adam = Adam(self.model.parameters(), lr=learning_rate) if optimizer is None else optimizer
 
 

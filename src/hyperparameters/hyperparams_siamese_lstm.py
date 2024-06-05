@@ -45,7 +45,7 @@ def objective(trial: optuna.trial, language: str, data_split: str):
 def main():
     language, data_split = parse_program_args()
     study = optuna.create_study(direction='maximize')
-    study.optimize(lambda trial: objective(trial, language, data_split), n_trials=30)
+    study.optimize(lambda trial: objective(trial, language, data_split), n_trials=2)
     best_params = study.best_params
     print_study_results(study)
     # Evaluate the best hyperparameters on the test set
