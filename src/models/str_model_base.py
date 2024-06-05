@@ -74,7 +74,7 @@ class STRModelBase:
             predicted_scores = self.predict(dataset)
             true_scores = torch.tensor(self.data.scores[dataset]).unsqueeze(1).to(self.device)
             loss = self.loss_function(predicted_scores, true_scores)
-            correlation = self.data.calculate_spearman_correlation(true_scores, predicted_scores)
+            correlation = self.data.calculate_spearman_correlation(true_scores.cpu(), predicted_scores.cpu())
         return predicted_scores, true_scores, loss, correlation
 
     def evaluate(self, dataset: str = 'Test') -> float:
