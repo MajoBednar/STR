@@ -14,7 +14,6 @@ Architecture: shared layers, common layers, activation function, dropout
 Optimizer: type, learning rate, weight decay;
 Early stopping: type, patience;
 Training: epochs, batch size; 
-Optional: gradient clipping; 
 """
 
 
@@ -50,10 +49,6 @@ def objective(trial: optuna.trial, language: str, data_split: str):
     # Train and evaluate model with chosen hyperparameters
     model = STRSiameseMLP(data_manager, model_architecture, learning_rate, optimizer, Verbose.SILENT)
     model.train(num_epochs, batch_size, early_stopping_option, patience)
-
-    # after loss.backward() and before optimizer.step()
-    # if gradient_clip > 0:
-    #     nn.utils.clip_grad_norm_(model_architecture.parameters(), gradient_clip)
 
     _, _, val_loss, val_corr = model.validate('Dev')
     return val_corr

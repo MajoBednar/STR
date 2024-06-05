@@ -9,7 +9,7 @@ from .hyperparameter_tuning import hyperparams_for_optimizer, print_study_result
 
 """ Hyperparameters for Siamese LSTM: 
 Transformer;
-Architecture: hidden dimension, number of layers, (optional: dropout);
+Architecture: hidden dimension, number of layers;
 Optimizer: type, learning rate, weight decay;
 Early stopping: type, patience;
 Training: epochs, batch size; 
@@ -25,7 +25,7 @@ def objective(trial: optuna.trial, language: str, data_split: str):
     early_stopping_option = trial.suggest_categorical('early_stopping_option', (0, 1, 2))
     patience = trial.suggest_categorical('patience', (20, 30, 100))
     batch_size = trial.suggest_categorical('batch_size', (16, 32, 64))
-    num_epochs = trial.suggest_int('num_epochs', 1, 100)
+    num_epochs = trial.suggest_int('num_epochs', 1, 30)
 
     # Setup parameters for the Siamese LSTM model
     data_manager = DataManagerWithTokenEmbeddings.load(language, data_split, transformer)
@@ -45,7 +45,7 @@ def objective(trial: optuna.trial, language: str, data_split: str):
 def main():
     language, data_split = parse_program_args()
     study = optuna.create_study(direction='maximize')
-    study.optimize(lambda trial: objective(trial, language, data_split), n_trials=100)
+    study.optimize(lambda trial: objective(trial, language, data_split), n_trials=30)
     best_params = study.best_params
     print_study_results(study)
     # Evaluate the best hyperparameters on the test set

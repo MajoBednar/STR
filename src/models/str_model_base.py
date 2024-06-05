@@ -15,6 +15,11 @@ class STRModelBase:
         self.loss_function: nn.MSELoss = nn.MSELoss()
         self.optimizer: AbstractOptimizer = AbstractOptimizer()
 
+        # Move the model to GPU if available
+        self.device: torch.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        print('The model will be using device:', self.device)
+        self.model.to(self.device)
+
     def train(self, epochs: int = 1, batch_size: int = 32, early_stopping: Eso = Eso.NONE, patience: int = 20) -> None:
         early_stopping_data = EarlyStoppingData(early_stopping, patience)
 
@@ -46,7 +51,7 @@ class STRModelBase:
         self.optimizer.zero_grad()
 
         predicted_scores = self.predict('Train', batch, batch_size)
-        true_scores = torch.tensor(self.data.scores['Train'][batch:batch + batch_size]).unsqueeze(1)
+        true_scores = torch.tensor(self.data.scores['Train'][batch:batch + batch_size]).unsqueeze(1).to(self.device)
 
         loss = self.loss_function(predicted_scores, true_scores)
         loss.backward()
@@ -56,18 +61,18 @@ class STRModelBase:
 
     def predict(self, dataset: str, batch: int = 0, batch_size: int = 0) -> torch.Tensor:
         if batch_size == 0:  # predict the score for each data point
-            input1 = self.data.get_embeddings()[dataset][0]
-            input2 = self.data.get_embeddings()[dataset][1]
+            input1 = self.data.get_embeddings()[dataset][0].to(self.device)
+            input2 = self.data.get_embeddings()[dataset][1].to(self.device)
         else:  # predict the score for data points in a batch
-            input1 = self.data.get_embeddings()[dataset][0][batch:batch + batch_size]
-            input2 = self.data.get_embeddings()[dataset][1][batch:batch + batch_size]
+            input1 = self.data.get_embeddings()[dataset][0][batch:batch + batch_size].to(self.device)
+            input2 = self.data.get_embeddings()[dataset][1][batch:batch + batch_size].to(self.device)
         return self.model(input1, input2)
 
     def validate(self, dataset: str) -> tuple[torch.Tensor, torch.Tensor, float, float]:
         self.model.eval()
         with torch.no_grad():
             predicted_scores = self.predict(dataset)
-            true_scores = torch.tensor(self.data.scores[dataset]).unsqueeze(1)
+            true_scores = torch.tensor(self.data.scores[dataset]).unsqueeze(1).to(self.device)
             loss = self.loss_function(predicted_scores, true_scores)
             correlation = self.data.calculate_spearman_correlation(true_scores, predicted_scores)
         return predicted_scores, true_scores, loss, correlation

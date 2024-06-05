@@ -66,7 +66,7 @@ def main() -> None:
     optimizer = Adam(architecture.parameters(), lr=1.1e-5, weight_decay=0.0003)
 
     siamese_mlp = STRSiameseMLP(data_manager, architecture, 0, optimizer)
-    siamese_mlp.train(epochs=27, batch_size=64, early_stopping=Eso.LOSS, patience=200)
+    siamese_mlp.train(epochs=7, batch_size=64, early_stopping=Eso.LOSS, patience=200)
     siamese_mlp.evaluate(dataset='Train')
     siamese_mlp.evaluate(dataset='Dev')
     siamese_mlp.evaluate()
