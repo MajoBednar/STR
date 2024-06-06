@@ -27,18 +27,18 @@ Best hyperparameters:
     Epochs: 29
 --------------------------------------
 Siamese LSTM:
-    Train:    0.
-    Dev:      0.
-    Test:     0.
+    Train:    0.922
+    Dev:      0.682
+    Test:     0.587
 Best hyperparameters:
-    Transformer:
-    Hidden dim factor:
-    Number of layers:
-    Optimizer:
-    Learning rate:
-    Weight decay:
-    Early stopping:
-    Patience:
-    Batch size:
-    Epochs:
+    Transformer: mBERT
+    Hidden dim factor: 1
+    Number of layers: 1
+    Optimizer: Adam
+    Learning rate: 1.75e-5
+    Weight decay: 0.00335
+    Early stopping: Loss
+    Patience: 20
+    Batch size: 32
+    Epochs: 56
 --------------------------------------
