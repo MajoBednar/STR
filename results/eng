@@ -31,14 +31,14 @@ Siamese LSTM:
     Dev:      0.
     Test:     0.
 Best hyperparameters:
-    Transformer:
-    Hidden dim factor:
-    Number of layers:
-    Optimizer:
-    Learning rate:
-    Weight decay:
-    Early stopping:
-    Patience:
-    Batch size:
-    Epochs:
+    Transformer: LaBSE
+    Hidden dim factor: 3
+    Number of layers: 1
+    Optimizer: RMSprop
+    Learning rate: 2.365e-5
+    Weight decay: 9.376e-5
+    Early stopping: None
+    Patience: -
+    Batch size: 64
+    Epochs: 15
 --------------------------------------

@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as functional
-from torch.optim import Adam
+from torch.optim import Adam, RMSprop
 
 from src.utilities.program_args import parse_program_args
 from src.utilities.constants import Verbose, EarlyStoppingOptions as Eso
@@ -58,9 +58,13 @@ def main() -> None:
     language, data_split = parse_program_args()
     data_manager = DataManagerWithTokenEmbeddings.load(language, data_split, 'LaBSE')
 
-    siamese_lstm = STRSiameseLSTM(data_manager)
-    siamese_lstm.train(epochs=50, early_stopping=Eso.LOSS)
+    architecture = SiameseLSTM(data_manager.embedding_dim, data_manager.embedding_dim * 3, 1)
+    optimizer = RMSprop(architecture.parameters(), lr=2.365e-5, weight_decay=9.376e-5)
+
+    siamese_lstm = STRSiameseLSTM(data_manager, architecture, 2.365e-5, optimizer)
+    siamese_lstm.train(epochs=15, early_stopping=Eso.NONE, batch_size=64)
     siamese_lstm.evaluate(dataset='Train')
+    siamese_lstm.evaluate(dataset='Dev')
     siamese_lstm.evaluate()
 
 
