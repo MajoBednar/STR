@@ -4,7 +4,7 @@ import pickle as pkl
 import numpy as np
 from scipy.stats import spearmanr
 
-from .constants import SENTENCE_SEPARATOR as SEP, FULL_LANGUAGE_NAME as FULL
+from .constants import SENTENCE_SEPARATOR as SEP, FULL_LANGUAGE_NAME as FULL, LANGUAGES
 
 
 class DataManager:
@@ -101,3 +101,13 @@ class DataManager:
     def __print_missing_dataset_warning(self, old_dataset: str, new_dataset: str) -> None:
         print(f'WARNING: {self.language + old_dataset} dataset is missing and being replaced with '
               f'{self.language + new_dataset} dataset')
+
+
+if __name__ == '__main__':
+    for lang in LANGUAGES[:-1]:
+        print(FULL[lang])
+        data_manager = DataManager(lang, 'custom')
+        size_train = len(data_manager.scores['Train'])
+        size_dev = len(data_manager.scores['Dev'])
+        size_test = len(data_manager.scores['Test'])
+        print(f'Train: {size_train}, Dev: {size_dev}, Test: {size_test}, Total: {size_train + size_dev + size_test}\n')
