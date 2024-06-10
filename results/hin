@@ -27,9 +27,9 @@ Best hyperparameters:
     Epochs: 27
 --------------------------------------
 Siamese LSTM:
-    Train:    0.989
-    Dev:      0.760
-    Test:     0.693
+    Train:    0.995
+    Dev:      0.776
+    Test:     0.714
 Best hyperparameters:
     Transformer: LaBSE
     Hidden dim factor: 3
