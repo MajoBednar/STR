@@ -56,13 +56,13 @@ def evaluate_siamese_lstm(data_manager: DataManagerWithTokenEmbeddings) -> None:
 
 def main() -> None:
     language, data_split = parse_program_args()
-    data_manager = DataManagerWithTokenEmbeddings.load(language, data_split, 'LaBSE')
+    data_manager = DataManagerWithTokenEmbeddings.load(language, data_split, 'mBERT')
 
-    architecture = SiameseLSTM(data_manager.embedding_dim, data_manager.embedding_dim * 3, 1)
-    optimizer = SGD(architecture.parameters(), lr=0.006, weight_decay=1.29e-5)
+    architecture = SiameseLSTM(data_manager.embedding_dim, data_manager.embedding_dim * 3, 2)
+    optimizer = Adam(architecture.parameters(), lr=3.3e-5, weight_decay=4.5e-5)
 
-    siamese_lstm = STRSiameseLSTM(data_manager, architecture, 0.006, optimizer)
-    siamese_lstm.train(epochs=100, early_stopping=Eso.CORR, batch_size=16, patience=20)
+    siamese_lstm = STRSiameseLSTM(data_manager, architecture, 3.3e-5, optimizer)
+    siamese_lstm.train(epochs=3, early_stopping=Eso.NONE, batch_size=16, patience=20)
     siamese_lstm.evaluate(dataset='Train')
     siamese_lstm.evaluate(dataset='Dev')
     siamese_lstm.evaluate()
