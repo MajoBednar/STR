@@ -2,7 +2,7 @@ from sys import argv
 
 from .constants import LANGUAGES
 
-SPLITS = ['original', 'custom']
+SPLITS = ['original', 'custom', 'augmented']
 
 
 def usage() -> None:
@@ -14,7 +14,7 @@ def usage() -> None:
         print(lang, end='/')
     print(LANGUAGES[-1] + '\n')
     print('[data split]: The data split to use.')
-    print('              This can be <original> or <custom> split.')
+    print('              This can be <original>, <custom> or <augmented> split.')
     print('              Optional argument. <original> split by default.')
 
 
