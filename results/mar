@@ -10,9 +10,9 @@ Cosine Similarity:
 Best Transformer: LaBSE
 --------------------------------------
 Siamese MLP:
-    Train:    0.981
-    Dev:      0.431
-    Test:     0.537
+    Train:    0.981     aug:
+    Dev:      0.431     aug:
+    Test:     0.537     aug:
 Best hyperparameters:
     Transformer: LaBSE
     Architecture size: Medium+Big
@@ -27,9 +27,9 @@ Best hyperparameters:
     Epochs: 143
 --------------------------------------
 Siamese LSTM:
-    Train:    0.951
-    Dev:      0.700
-    Test:     0.783
+    Train:    0.951     aug:
+    Dev:      0.700     aug:
+    Test:     0.783     aug:
 Best hyperparameters:
     Transformer: LaBSE
     Hidden dim factor: 3
