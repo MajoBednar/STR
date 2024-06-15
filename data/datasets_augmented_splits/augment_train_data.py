@@ -38,7 +38,7 @@ with open(file, encoding='utf-8') as f:
     usable_sentences = []
     for line in f:
         line = line.strip()
-        if 10 <= len(nltk.word_tokenize(line)) <= 20:
+        if min_words <= len(nltk.word_tokenize(line)) <= max_words:
             usable_sentences.append(line)
 
 # select the appropriate number of sentences from usable sentences
