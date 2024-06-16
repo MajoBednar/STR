@@ -2,9 +2,11 @@ import pandas as pd
 import os
 import pickle as pkl
 import numpy as np
+import matplotlib.pyplot as plt
 from scipy.stats import spearmanr
 
-from .constants import SENTENCE_SEPARATOR as SEP, FULL_LANGUAGE_NAME as FULL, LANGUAGES
+from .constants import SENTENCE_SEPARATOR as SEP, FULL_LANGUAGE_NAME as FULL
+from .program_args import parse_program_args
 
 
 class DataManager:
@@ -48,6 +50,14 @@ class DataManager:
     def sentence_pairs_to_pair_of_sentences(sentence_pairs: list[list[str]]) -> tuple[list[str], list[str]]:
         list_1, list_2 = zip(*sentence_pairs)
         return list(list_1), list(list_2)
+
+    @staticmethod
+    def print_scores_histogram(scores: iter, bins: int = 20) -> None:
+        plt.hist(scores, bins=bins, edgecolor='black')
+        plt.title('Histogram')
+        plt.xlabel('Scores')
+        plt.ylabel('Frequency')
+        plt.show()
 
     def _save(self, transformer_model: str, directory: str) -> None:
         if not os.path.exists(directory):
@@ -104,10 +114,13 @@ class DataManager:
 
 
 if __name__ == '__main__':
-    for lang in LANGUAGES[:-1]:
-        print(FULL[lang])
-        data_manager = DataManager(lang, 'custom')
-        size_train = len(data_manager.scores['Train'])
-        size_dev = len(data_manager.scores['Dev'])
-        size_test = len(data_manager.scores['Test'])
-        print(f'Train: {size_train}, Dev: {size_dev}, Test: {size_test}, Total: {size_train + size_dev + size_test}\n')
+    lang, split = parse_program_args()
+    print(FULL[lang])
+    data_manager = DataManager(lang, split)
+    size_train = len(data_manager.scores['Train'])
+    size_dev = len(data_manager.scores['Dev'])
+    size_test = len(data_manager.scores['Test'])
+    print(f'Train: {size_train}, Dev: {size_dev}, Test: {size_test}, Total: {size_train + size_dev + size_test}')
+    DataManager.print_scores_histogram(data_manager.scores['Train'])
+    DataManager.print_scores_histogram(data_manager.scores['Dev'])
+    DataManager.print_scores_histogram(data_manager.scores['Test'])
