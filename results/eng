@@ -27,7 +27,7 @@ Best hyperparameters:
     Epochs: 191
 --------------------------------------
 Siamese LSTM:
-    Train:   >0.900
+    Train:    ?
     Dev:      0.765
     Test:     0.748
 Best hyperparameters:

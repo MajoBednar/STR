@@ -44,34 +44,34 @@ Best hyperparameters:
 --------------------------------------
 --------------------------------------
 Siamese MLP augmented:
-    Train:    0.
-    Dev:      0.
-    Test:     0.
+    Train:    0.069
+    Dev:      0.689
+    Test:     0.523
 Best hyperparameters:
-    Transformer: XLMR
+    Transformer: mBERT
     Architecture size: Small+Medium
-    Activation function: ReLU
-    Dropout: 0.4
-    Optimizer: RMSprop
-    Learning rate: 0.001
-    Weight decay: 2.4e-6
+    Activation function: LeakyReLU
+    Dropout: 0.445
+    Optimizer: Adam
+    Learning rate: 0.0021
+    Weight decay: 6e-6
     Early stopping: None
     Patience: -
     Batch size: 64
-    Epochs: 124
+    Epochs: 92
 --------------------------------------
 Siamese LSTM augmented:
-    Train:    0.
-    Dev:      0.
-    Test:     0.
+    Train:    0.323
+    Dev:      0.603
+    Test:     0.493
 Best hyperparameters:
-    Transformer: mBERT
-    Hidden dim factor: 3
-    Number of layers: 2
-    Optimizer: Adam
-    Learning rate: 3.3e-5
-    Weight decay: 4.5e-5
-    Early stopping: None
+    Transformer: LaBSE
+    Hidden dim factor: 2
+    Number of layers: 1
+    Optimizer: RMSprop
+    Learning rate: 1.23e-5
+    Weight decay: 0.0027
+    Early stopping: Correlation
     Patience: -
     Batch size: 16
-    Epochs: 3
+    Epochs: 17
