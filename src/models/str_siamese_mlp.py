@@ -61,13 +61,13 @@ def evaluate_siamese_mlp(data_manager: DataManagerWithSentenceEmbeddings) -> Non
 
 def main() -> None:
     language, data_split = parse_program_args()
-    data_manager = DataManagerWithSentenceEmbeddings.load(language, data_split, 'miniLM')
+    data_manager = DataManagerWithSentenceEmbeddings.load(language, data_split, 'LaBSE')
 
-    architecture = SiameseMLP(data_manager.embedding_dim, (1024, 512, 256), (32, 1), nn.LeakyReLU, 0.165)
-    optimizer = Adam(architecture.parameters(), lr=1.1e-5, weight_decay=0.0003)
+    architecture = SiameseMLP(data_manager.embedding_dim, (1024, 512, 256), (128, 64, 32, 1), nn.ReLU, 0.4)
+    optimizer = RMSprop(architecture.parameters(), lr=0.002, weight_decay=1e-6)
 
-    siamese_mlp = STRSiameseMLP(data_manager, architecture, 0, optimizer)
-    siamese_mlp.train(epochs=7, batch_size=64, early_stopping=Eso.LOSS, patience=200)
+    siamese_mlp = STRSiameseMLP(data_manager, architecture, 0.002, optimizer)
+    siamese_mlp.train(epochs=143, batch_size=32, early_stopping=Eso.LOSS, patience=100)
     siamese_mlp.evaluate(dataset='Train')
     siamese_mlp.evaluate(dataset='Dev')
     siamese_mlp.evaluate()

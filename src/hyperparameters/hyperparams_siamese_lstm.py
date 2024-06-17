@@ -25,7 +25,7 @@ def objective(trial: optuna.trial, language: str, data_split: str):
     optimizer_name, learning_rate, weight_decay = hyperparams_for_optimizer(trial)
     early_stopping_option, patience = hyperparams_for_early_stopping(trial)
     batch_size = trial.suggest_categorical('batch_size', (16, 32, 64))
-    num_epochs = trial.suggest_int('num_epochs', 1, 30)
+    num_epochs = trial.suggest_int('num_epochs', 1, 100)
 
     # Setup parameters for the Siamese LSTM model
     data_manager = DataManagerWithTokenEmbeddings.load(language, data_split, transformer)
@@ -45,7 +45,7 @@ def objective(trial: optuna.trial, language: str, data_split: str):
 def main():
     language, data_split = parse_program_args()
     study = optuna.create_study(direction='maximize')
-    study.optimize(lambda trial: objective(trial, language, data_split), n_trials=2)
+    study.optimize(lambda trial: objective(trial, language, data_split), n_trials=50)
     best_params = study.best_params
     print_study_results(study)
     # Evaluate the best hyperparameters on the test set

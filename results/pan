@@ -10,9 +10,9 @@ Cosine Similarity:
 Best Transformer: all roughly the same
 --------------------------------------
 Siamese MLP:
-    Train:    0.900     aug:
-    Dev:      0.688     aug:
-    Test:     0.587     aug:
+    Train:    0.900     aug: 0.112
+    Dev:      0.688     aug: 0.594
+    Test:     0.587     aug: 0.519
 Best hyperparameters:
     Transformer: XLMR
     Architecture size: Small+Medium
@@ -27,9 +27,9 @@ Best hyperparameters:
     Epochs: 124
 --------------------------------------
 Siamese LSTM:
-    Train:    0.937     aug:
-    Dev:      0.594     aug:
-    Test:     0.439     aug:
+    Train:    0.937     aug: 0.206
+    Dev:      0.594     aug: 0.549
+    Test:     0.439     aug: 0.395
 Best hyperparameters:
     Transformer: mBERT
     Hidden dim factor: 3
