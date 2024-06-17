@@ -42,3 +42,36 @@ Best hyperparameters:
     Batch size: 32
     Epochs: 8
 --------------------------------------
+--------------------------------------
+Siamese MLP augmented:
+    Train:    0.
+    Dev:      0.
+    Test:     0.
+Best hyperparameters:
+    Transformer: LaBSE
+    Architecture size: Medium+Big
+    Activation function: ReLU
+    Dropout: 0.4
+    Optimizer: RMSprop
+    Learning rate: 0.002
+    Weight decay: 1e-6
+    Early stopping: Loss
+    Patience: 100
+    Batch size: 32
+    Epochs: 143
+--------------------------------------
+Siamese LSTM augmented:
+    Train:    0.
+    Dev:      0.
+    Test:     0.
+Best hyperparameters:
+    Transformer: LaBSE
+    Hidden dim factor: 3
+    Number of layers: 1
+    Optimizer: RMSprop
+    Learning rate: 0.000544
+    Weight decay: 0.0006
+    Early stopping: Loss
+    Patience: -
+    Batch size: 32
+    Epochs: 8
