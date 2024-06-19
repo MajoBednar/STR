@@ -44,9 +44,9 @@ Best hyperparameters:
 --------------------------------------
 --------------------------------------
 Siamese MLP augmented:
-    Train:    0.
-    Dev:      0.
-    Test:     0.
+    Train:    0.995
+    Dev:      0.448
+    Test:     0.492
 Best hyperparameters:
     Transformer: miniLM
     Architecture size: Medium+Medium
@@ -61,9 +61,9 @@ Best hyperparameters:
     Epochs: 105
 --------------------------------------
 Siamese LSTM augmented:
-    Train:    0.
-    Dev:      0.
-    Test:     0.
+    Train:    0.926
+    Dev:      0.801
+    Test:     0.725
 Best hyperparameters:
     Transformer: LaBSE
     Hidden dim factor: 3
